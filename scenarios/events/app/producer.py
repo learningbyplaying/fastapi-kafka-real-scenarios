@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from confluent_kafka import Producer
 from confluent_kafka.admin import AdminClient, NewTopic
-from models import EcommerceMessage, PublisherMessage
 
 ## Settings
 from dotenv import load_dotenv
