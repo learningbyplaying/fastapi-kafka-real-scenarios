@@ -22,4 +22,4 @@ def read_root():
     # Flush and wait for delivery reports
     producer.flush()
 
-    return {"Kafka": "Producer"}
+    return {"Kafka": "Consumer"}
