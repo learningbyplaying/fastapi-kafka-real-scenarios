@@ -7,7 +7,7 @@
   - Ecommerce:
 
 
-
+2. Setup kafka environment
 
 2. Setup topics, partitions
 
