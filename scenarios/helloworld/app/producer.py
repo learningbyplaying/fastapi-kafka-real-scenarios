@@ -30,7 +30,7 @@ async def setup():
     admin_client.create_topics([new_topic])
     print(admin_client.list_topics().topics)
 
-    return {"Kafka": "Setup"}
+    return {"Kafka": "Stupe"}
 
 class Message(BaseModel):
     text: str

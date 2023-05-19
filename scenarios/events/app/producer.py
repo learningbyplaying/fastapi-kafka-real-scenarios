@@ -26,12 +26,10 @@ replication_factor = 1  # Specify the replication factor for the topic
 
 @app.post("/setup")
 async def setup():
-
     admin_client = AdminClient(admin_config)
     new_topic = NewTopic(topic, num_partitions, replication_factor)
     admin_client.create_topics([new_topic])
     print(admin_client.list_topics().topics)
-
     return {"Kafka": "Setup"}
 
 
