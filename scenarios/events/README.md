@@ -1,10 +1,10 @@
-# FastAPI Kafka Hello World
+# FastAPI Kafka Events
 
 
 ## Setup docker
 
 ```
-cd $REPO_PATH && docker-compose up
+cd $REPO_PATH/scenarios/events && docker-compose up
 ```
 ## How to run
 

@@ -4,7 +4,7 @@
 ## Setup docker
 
 ```
-cd $REPO_PATH && docker-compose up
+cd $REPO_PATH/scenarios/helloworld  && docker-compose up
 ```
 ## How to run
 

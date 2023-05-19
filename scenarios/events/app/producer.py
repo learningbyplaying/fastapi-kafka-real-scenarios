@@ -3,25 +3,24 @@ from confluent_kafka import Producer
 from confluent_kafka.admin import AdminClient, NewTopic
 from models import EcommerceMessage, PublisherMessage
 
+## Settings
 from dotenv import load_dotenv
 import os
 load_dotenv()
-
-app = FastAPI()
-
 KAFKA_SERVICE=os.getenv("KAFKA_SERVICE")
 EVENTS_TOPIC=os.getenv("EVENTS_TOPIC")
 print(os.getenv("APP_NAME"))
 
-admin_config = {
-    'bootstrap.servers': 'kafka:9092' # Update with your Kafka broker's address
-}
+app = FastAPI()
+
+
+admin_config = {'bootstrap.servers': '{}:9092'.format(KAFKA_SERVICE)}
 producer_config = {
-    'bootstrap.servers': 'kafka:9092',  # Update with your Kafka broker's address
+    'bootstrap.servers': '{}:9092'.format(KAFKA_SERVICE),
     'client.id': 'fastapi-producer'
 }
 topic = EVENTS_TOPIC
-num_partitions = 3  # Specify the number of partitions for the topic
+num_partitions = 2  # Specify the number of partitions for the topic
 replication_factor = 1  # Specify the replication factor for the topic
 
 @app.post("/setup")
@@ -31,7 +30,6 @@ async def setup():
     admin_client.create_topics([new_topic])
     print(admin_client.list_topics().topics)
     return {"Kafka": "Setup"}
-
 
 @app.post("/producer/ecommerce")
 async def producer(message: EcommerceMessage):
