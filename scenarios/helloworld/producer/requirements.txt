@@ -1,3 +1,0 @@
-fastapi
-uvicorn
-confluent_kafka

@@ -21,27 +21,26 @@ services:
 
 
   producer:
-    build: ./producer
+    build: ./app
     volumes:
-     - ./producer:/app
+     - ./app:/app
     ports:
      - "80:80"
     environment:
      - PORT=80
-    command: uvicorn main:app --host 0.0.0.0 --port 80 --reload
+    command: uvicorn producer:app --host 0.0.0.0 --port 80 --reload
     depends_on:
      - kafka
 
   consumer:
-    build: ./consumer
+    build: ./app
     volumes:
-     - ./consumer:/app
+     - ./app:/app
     ports:
      - "8080:80"
     environment:
      - PORT=80
-    #command: uvicorn main:app --host 0.0.0.0 --port 80 --reload
-    command: python -u main.py
+    command: python -u consumer.py
     #sleep infinity
     depends_on:
      - producer
