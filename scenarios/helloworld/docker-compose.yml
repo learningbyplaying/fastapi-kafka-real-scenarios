@@ -32,14 +32,16 @@ services:
     depends_on:
      - kafka
 
-#  consumer:
-#    build: ./consumer
-#    volumes:
-#     - ./consumer:/app
-#    ports:
-#     - "8080:80"
-#    environment:
-#     - PORT=80
-#    command: sleep infinity
-#    depends_on:
-#     - producer
+  consumer:
+    build: ./consumer
+    volumes:
+     - ./consumer:/app
+    ports:
+     - "8080:80"
+    environment:
+     - PORT=80
+    #command: uvicorn main:app --host 0.0.0.0 --port 80 --reload
+    command: python -u main.py
+    #sleep infinity
+    depends_on:
+     - producer

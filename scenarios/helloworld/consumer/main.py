@@ -1,4 +1,5 @@
 from confluent_kafka import Consumer, KafkaError
+import time
 
 conf = {
     'bootstrap.servers': 'kafka:9092',
@@ -11,7 +12,6 @@ conf = {
 
 def consume_messages():
     consumer = Consumer(conf)
-
     consumer.subscribe(['my_topic'])
 
     try:
@@ -38,8 +38,11 @@ def startup():
     consume_messages()
 
 if __name__ == "__main__":
-    try:
-        print("Starting consumer...")
-        startup()
-    except Exception as e:
-        print(f"Exception occurred: {e}")
+    while True:
+        try:
+            print("Starting consumer...")
+            startup()
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+
+        time.sleep(5)  # Sleep for 1 second
