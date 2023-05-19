@@ -30,3 +30,5 @@ curl -X 'POST' \
   "text": "my text input"
 }'
 ```
+
+You can see the result on the docker-compose output
