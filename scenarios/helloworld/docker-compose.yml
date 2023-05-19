@@ -19,22 +19,39 @@ services:
     depends_on:
       - zookeeper
 
-  producer:
-    build: ./producer
+  schema_setup:
+    build: ./schema-setup
     volumes:
-     - ./producer:/app
+     - ./schema-setup:/app
     ports:
-     - "80:80"
+     - "8081:80"
     environment:
      - PORT=80
-    command: uvicorn main:app --host 0.0.0.0 --port 80 --reload
+    #command: sleep infinity
+    command: sleep infinity
+    depends_on:
+     - kafka
 
-  consumer:
-    build: ./consumer
-    volumes:
-     - ./consumer:/app
-    ports:
-     - "8080:80"
-    environment:
-     - PORT=80
-    command: uvicorn main:app --host 0.0.0.0 --port 80 --reload
+#  producer:
+#    build: ./producer
+#    volumes:
+#     - ./producer:/app
+#    ports:
+#     - "80:80"
+#    environment:
+#     - PORT=80
+#    command: uvicorn main:app --host 0.0.0.0 --port 80 --reload
+#    depends_on:
+#     - schema_setup
+
+#  consumer:
+#    build: ./consumer
+#    volumes:
+#     - ./consumer:/app
+#    ports:
+#     - "8080:80"
+#    environment:
+#     - PORT=80
+#    command: sleep infinity
+#    depends_on:
+#     - producer
