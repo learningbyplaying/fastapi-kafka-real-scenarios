@@ -1,7 +1,10 @@
 # FastAPI Kafka Events
 
 
-## Business requeriments
+## Business requirements
+
+  Events of the users of the company comming from Ecommerce and Publishers marketing.
+
 
 ## Infraestructure
 

@@ -1,8 +1,15 @@
 from confluent_kafka import Consumer, KafkaError
 import time
 
+## Settings
+from dotenv import load_dotenv
+import os
+load_dotenv()
+KAFKA_SERVICE=os.getenv("KAFKA_SERVICE")
+EVENTS_TOPIC=os.getenv("EVENTS_TOPIC")
+
 conf = {
-    'bootstrap.servers': 'kafka:9092',
+    'bootstrap.servers': '{}:9092'.format(KAFKA_SERVICE),
     'auto.offset.reset': 'earliest',
     'enable.auto.commit': True,
     'group.id': 'my-group',
@@ -12,7 +19,7 @@ conf = {
 
 def consume_messages():
     consumer = Consumer(conf)
-    consumer.subscribe(['events'])
+    consumer.subscribe([EVENTS_TOPIC])
 
     try:
         while True:
