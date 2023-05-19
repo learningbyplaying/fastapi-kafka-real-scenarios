@@ -14,7 +14,6 @@ producer_config = {
 }
 topic = 'my_topic'
 
-
 @app.post("/setup")
 async def setup():
 
@@ -30,7 +29,7 @@ async def setup():
     admin_client.create_topics([new_topic])
     print(admin_client.list_topics().topics)
 
-    return {"Kafka": "Stupe"}
+    return {"Kafka": "Setup"}
 
 
 @app.post("/producer/ecommerce")
