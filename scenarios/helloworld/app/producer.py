@@ -5,18 +5,18 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
+admin_config = {
+    'bootstrap.servers': 'kafka:9092'  # Update with your Kafka broker's address
+}
 producer_config = {
     'bootstrap.servers': 'kafka:9092',  # Update with your Kafka broker's address
     'client.id': 'fastapi-producer'
 }
-
 topic = 'my_topic'
 
 async def kafka_startup():
     # Kafka AdminClient Configuration
-    admin_config = {
-        'bootstrap.servers': 'kafka:9092'  # Update with your Kafka broker's address
-    }
+
     # Create AdminClient
     admin_client = AdminClient(admin_config)
     # Define the topic to be created
