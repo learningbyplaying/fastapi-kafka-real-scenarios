@@ -19,7 +19,6 @@ services:
     depends_on:
       - zookeeper
 
-
   producer:
     build: ./app
     volumes:
