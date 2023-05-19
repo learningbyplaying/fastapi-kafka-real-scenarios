@@ -14,10 +14,10 @@ producer_config = {
 }
 topic = 'my_topic'
 
-async def kafka_startup():
-    # Kafka AdminClient Configuration
 
-    # Create AdminClient
+@app.post("/setup")
+async def setup():
+
     admin_client = AdminClient(admin_config)
     # Define the topic to be created
     topic_name = topic
@@ -30,14 +30,13 @@ async def kafka_startup():
     admin_client.create_topics([new_topic])
     print(admin_client.list_topics().topics)
 
+    return {"Kafka": "Stupe"}
 
 class Message(BaseModel):
     text: str
 
-@app.post("/")
-async def read_root(message: Message):
-
-    await kafka_startup()
+@app.post("/producer")
+async def producer(message: Message):
 
     producer = Producer(producer_config)
     producer.produce(topic, value=message.text.encode('utf-8'))
