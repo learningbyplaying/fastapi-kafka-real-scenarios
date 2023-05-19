@@ -1,12 +1,19 @@
 # FastAPI Kafka Events
 
 
-## Setup docker
+## Business requeriments
+
+## Infraestructure
+
+
+## Setup
+
+### Setup docker
 
 ```
 cd $REPO_PATH/scenarios/events && docker-compose up
 ```
-## How to run
+### How to run
 
 1. Go to URL: http://0.0.0.0/docs
 
