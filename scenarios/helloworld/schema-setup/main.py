@@ -1,4 +1,5 @@
 from confluent_kafka.admin import AdminClient, NewTopic
+import pprint
 
 # Kafka AdminClient Configuration
 admin_config = {
@@ -20,7 +21,9 @@ new_topic = NewTopic(topic_name, num_partitions, replication_factor)
 # Create the topic using the AdminClient
 r = admin_client.create_topics([new_topic])
 
-print(new_topic, admin_client, r)
+#print(new_topic, admin_client, r)
+
+print(admin_client.list_topics().topics)
 
 # Close the AdminClient
 #admin_client.close()
