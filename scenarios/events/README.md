@@ -3,7 +3,17 @@
 
 ## Business requirements
 
-  Events of the users of the company comming from Ecommerce and Publishers marketing.
+  The application has to gather all the user activity of different sources, the data set resultant called "Events".
+
+  We have some specified sources:
+
+  - Ecommerce like (visits, clicks, basket items, checkouts)
+  - Marketing email publisher:
+    - user activity like in email marketing (email impact, email open, email click)
+  - Marketing display publisher:
+    - user activity like banner (banner view, banner clicked)
+  
+
 
 
 ## Infraestructure
