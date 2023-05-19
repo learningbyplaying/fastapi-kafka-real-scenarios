@@ -15,6 +15,7 @@ topic = EVENTS_TOPIC
 num_partitions = 2  # Specify the number of partitions for the topic
 replication_factor = 1  # Specify the replication factor for the topic
 
+
 app = FastAPI()
 
 @app.post("/setup")
@@ -25,18 +26,8 @@ async def setup():
     print(admin_client.list_topics().topics)
     return {"Kafka": "Setup"}
 
-@app.post("/producer/ecommerce")
-async def producer(message: EcommerceMessage):
+from channels.ecommerce.ecommerce import app as ecommerce
+app.include_router(ecommerce.router)
 
-    producer = Producer(producer_config)
-    producer.produce(topic, value=message.text.encode('utf-8'))
-    producer.flush()
-    return {"Kafka": "EcommerceMessage"}
-
-@app.post("/producer/publisher")
-async def producer(message: PublisherMessage):
-
-    producer = Producer(producer_config)
-    producer.produce(topic, value=message.text.encode('utf-8'))
-    producer.flush()
-    return {"Kafka": "PublisherMessage"}
+from channels.publishers.publishers import app as publishers
+app.include_router(publishers.router)
