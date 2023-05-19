@@ -9,9 +9,14 @@
 
 2. Setup kafka environment
 
-2. Setup topics, partitions
+3. Setup topics:
 
-3. Setup producer to write on topic "tablename"
+  "publishers":
+    - partitions: 1
+    - replicas: 1
+
+
+4. Setup producer to write on topic "tablename"
 
 4. Setup consumer to write on s3 Datalake:
 
