@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 KAFKA_SERVICE=os.getenv("KAFKA_SERVICE")
-EVENTS_TOPIC=os.getenv("EVENTS_TOPIC")
+
+EVENTS_TOPIC = "ecommerce"
 
 conf = {
     'bootstrap.servers': '{}:9092'.format(KAFKA_SERVICE),

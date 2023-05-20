@@ -12,9 +12,8 @@
     - user activity like in email marketing (email impact, email open, email click)
   - Marketing display publisher:
     - user activity like banner (banner view, banner clicked)
-  
 
-
+  - Alowing to add new user activity sources
 
 ## Infraestructure
 
