@@ -1,16 +1,10 @@
 from confluent_kafka import Consumer, KafkaError
 import time
 
-## Settings
-from dotenv import load_dotenv
-import os
-load_dotenv()
-KAFKA_SERVICE=os.getenv("KAFKA_SERVICE")
-
 EVENTS_TOPIC = "ecommerce_events"
 
 conf = {
-    'bootstrap.servers': '{}:9092'.format(KAFKA_SERVICE),
+    'bootstrap.servers': 'kafka:9092',
     'auto.offset.reset': 'earliest',
     'enable.auto.commit': True,
     'group.id': 'my-group',
@@ -45,7 +39,17 @@ def consume_messages():
 def startup():
     consume_messages()
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
+#    while True:
+#        try:
+#            print("Starting consumer...")
+#            startup()
+#        except Exception as e:
+#            print(f"Exception occurred: {e}")
+#
+#        time.sleep(5)  # Sleep for 1 second
+
+def continuous_task():
     while True:
         try:
             print("Starting consumer...")
@@ -54,3 +58,16 @@ if __name__ == "__main__":
             print(f"Exception occurred: {e}")
 
         time.sleep(5)  # Sleep for 1 second
+
+from fastapi import FastAPI, BackgroundTasks
+
+app = FastAPI()
+
+@app.get("/")
+async def root(background_tasks: BackgroundTasks):
+    background_tasks.add_task(continuous_task)
+    return {"message": "Task started."}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, port=80)
