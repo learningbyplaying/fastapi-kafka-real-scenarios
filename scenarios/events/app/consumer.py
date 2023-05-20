@@ -13,9 +13,9 @@ conf = {
 def consume_messages(channel):
 
     base_path = '/app/channels/{}'.format(channel)
-    avro_schema = avro.load('{}/ecommerce_event.avsc'.format(base_path))
+    avro_schema = avro.load('{}/schema.avsc'.format(base_path))
     json_file = "{}/topic.json".format(base_path)
-    
+
     json_data = json.load(open(json_file))
     topic = json_data['topic']
     print(topic)
