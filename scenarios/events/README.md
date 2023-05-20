@@ -1,7 +1,9 @@
 Setup Environment:
 
-sudo docker-compose -f kafka-environment.yml --project-name app up -d
-sudo docker-compose -f app.yml --project-name app up -d
+```
+sudo docker-compose -f kafka-environment.yml up -d
+sudo docker-compose -f app.yml up -d
+```
 
 Setup channel "Ecommerce":
 
@@ -9,7 +11,7 @@ Setup channel "Ecommerce":
 cd $REPO_PATH/scenarios/events/app && ./setup.sh ecommerce_events channels/ecommerce/topic.json
 ```
 
-# Fast`API Kafka Events
+# Fast API Kafka Events
 
 
 
