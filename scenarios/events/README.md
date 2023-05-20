@@ -1,14 +1,19 @@
-Setup Environment:
+## Setup Ingestion Environment:
 
 ```
-sudo docker-compose -f kafka-environment.yml up -d
-sudo docker-compose -f app.yml up -d
+sudo docker-compose -f ingestion.yml up -d
 ```
 
-Setup channel "Ecommerce":
+## Setup channel "Ecommerce":
 
 ```
 cd $REPO_PATH/scenarios/events/app && ./setup.sh ecommerce_events channels/ecommerce/topic.json
+```
+
+## Setup consumers:
+
+```
+sudo docker-compose -f consumers.yml up -d
 ```
 
 # Fast API Kafka Events

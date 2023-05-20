@@ -30,3 +30,15 @@ services:
       - SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL=zookeeper:2181
       - SCHEMA_REGISTRY_HOST_NAME=schema-registry
       - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
+
+  producer:
+    build: ./app
+    volumes:
+     - ./app:/app
+    ports:
+     - "80:80"
+    environment:
+     - PORT=80
+    command: uvicorn producer:app --host 0.0.0.0 --port 80 --reload
+    depends_on:
+      - kafka
