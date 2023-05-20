@@ -20,7 +20,7 @@ services:
      - "8000:80"
     environment:
      - PORT=80
-    command: python -u test.py
+    command: python -u consumer.py
     #sleep infinity
     depends_on:
      - producer
