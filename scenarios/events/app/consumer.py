@@ -1,14 +1,6 @@
 from confluent_kafka import Consumer, KafkaError, avro
 import time, json
 
-EVENTS_TOPIC = "ecommerce_events"
-
-avro_schema = avro.load('/app/channels/ecommerce/ecommerce_event.avsc')
-json_file = "/app/channels/ecommerce/topic.json"
-json_data = json.load(open(json_file))
-topic = json_data['topic']
-
-print(topic)
 
 conf = {
     'bootstrap.servers': 'kafka:9092',
@@ -20,6 +12,13 @@ conf = {
 }
 
 def consume_messages():
+
+    avro_schema = avro.load('/app/channels/ecommerce/ecommerce_event.avsc')
+    json_file = "/app/channels/ecommerce/topic.json"
+    json_data = json.load(open(json_file))
+    topic = json_data['topic']
+    print(topic)
+    
     consumer = Consumer(conf)
     consumer.subscribe([topic])
 
