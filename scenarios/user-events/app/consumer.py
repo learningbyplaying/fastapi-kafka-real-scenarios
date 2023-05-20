@@ -10,16 +10,18 @@ from confluent_kafka.deserializing_consumer import DeserializingConsumer
 def consume_messages(channel):
 
     base_path = '/app/channels/{}'.format(channel)
+    schema_registry_configuration = {
+        "url": "http://schema-registry:8081",
+    }
+    schema_registry_client = SchemaRegistryClient(schema_registry_configuration)
+    
     schema_str = open(f"{base_path}/schema.avsc").read()
     json_file = "{}/topic.json".format(base_path)
     json_data = json.load(open(json_file))
     topic = json_data['topic']
 
     # The AVRO Schema
-    schema_registry_configuration = {
-        "url": "http://schema-registry:8081",
-    }
-    schema_registry_client = SchemaRegistryClient(schema_registry_configuration)
+
 
     serializer = AvroDeserializer(schema_str=schema_str, schema_registry_client=schema_registry_client)
 
@@ -35,7 +37,7 @@ def consume_messages(channel):
 
     consumer = DeserializingConsumer(conf)
     consumer.subscribe([topic])
-    
+
     while True:
         message = consumer.poll(timeout=5.0)
         # id created to track logic through logs
