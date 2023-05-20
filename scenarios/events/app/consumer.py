@@ -1,6 +1,5 @@
 from confluent_kafka import Consumer, KafkaError, avro
-import time, json
-
+import time, json, argparse
 
 conf = {
     'bootstrap.servers': 'kafka:9092',
@@ -11,14 +10,16 @@ conf = {
     'api.version.fallback.ms': 0
 }
 
-def consume_messages():
+def consume_messages(channel):
 
-    avro_schema = avro.load('/app/channels/ecommerce/ecommerce_event.avsc')
-    json_file = "/app/channels/ecommerce/topic.json"
+    base_path = '/app/channels/{}'.format(channel)
+    avro_schema = avro.load('{}/ecommerce_event.avsc'.format(base_path))
+    json_file = "{}/topic.json".format(base_path)
+    
     json_data = json.load(open(json_file))
     topic = json_data['topic']
     print(topic)
-    
+
     consumer = Consumer(conf)
     consumer.subscribe([topic])
 
@@ -42,14 +43,19 @@ def consume_messages():
     finally:
         consumer.close()
 
-def startup():
-    consume_messages()
+def startup(channel):
+    consume_messages(channel)
 
 if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description = 'Example with non-optional arguments')
+    parser.add_argument('--channel', action = "store")
+    channel = parser.parse_args().channel
+
     while True:
         try:
             print("Starting consumer...")
-            startup()
+            startup(channel)
         except Exception as e:
             print(f"Exception occurred: {e}")
 
