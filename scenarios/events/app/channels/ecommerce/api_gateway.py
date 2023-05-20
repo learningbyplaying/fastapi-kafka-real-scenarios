@@ -13,7 +13,6 @@ import os, json
 load_dotenv()
 
 #Infraestructue
-admin_config = {'bootstrap.servers': 'kafka:9092'}
 schema_registry_url = 'http://schema-registry:8081'
 producer_config = {'bootstrap.servers': 'kafka:9092','client.id': 'fastapi-producer', 'schema.registry.url': schema_registry_url}
 

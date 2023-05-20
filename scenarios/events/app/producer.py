@@ -21,7 +21,7 @@ async def setup(topic: KafkaTopic):
     return {"Message": "Kafka Topic created", "Items": topics}
 
 
-from channels.ecommerce.ecommerce import app as ecommerce
+from channels.ecommerce.api_gateway import app as ecommerce
 app.include_router(ecommerce.router)
 
 #from channels.publishers.publishers import app as publishers
