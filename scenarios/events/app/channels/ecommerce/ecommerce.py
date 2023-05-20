@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from confluent_kafka import Producer
 from confluent_kafka.admin import AdminClient, NewTopic
-
+from confluent_kafka import avro
+from confluent_kafka.avro import AvroProducer
 
 from dotenv import load_dotenv
 import os
@@ -16,6 +17,10 @@ num_partitions = 2  # Specify the number of partitions for the topic
 replication_factor = 1  # Specify the replication factor for the topic
 
 class EcommerceMessage(BaseModel):
+    event_type: str
+    time: str
+    user_id: str
+    url: str
     text: str
 
 app = FastAPI()
@@ -31,6 +36,9 @@ async def setup():
 
 @app.post("/ecommerce/producer")
 async def producer(message: EcommerceMessage):
+
+
+    print(message)
 
     producer = Producer(producer_config)
     producer.produce(topic, value=message.text.encode('utf-8'))
