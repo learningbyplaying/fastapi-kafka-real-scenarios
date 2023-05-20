@@ -15,8 +15,9 @@
 #echo ""
 #echo ""
 
-topic=$1
-json_filename=./$2
+json_filename=./$1
+
+topic=$(jq '.name' "$json_filename")
 schema_json=$(jq -c '.' "$json_filename")
 
 echo ""; echo "";
