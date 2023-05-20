@@ -2,17 +2,23 @@ from fastapi import FastAPI
 from confluent_kafka import Producer
 from confluent_kafka.admin import AdminClient, NewTopic
 
+from models import KafkaTopic
+
 ## Settings
 from dotenv import load_dotenv
 import os
 load_dotenv()
-KAFKA_SERVICE=os.getenv("KAFKA_SERVICE")
-EVENTS_TOPIC=os.getenv("EVENTS_TOPIC")
-admin_config = {'bootstrap.servers': '{}:9092'.format(KAFKA_SERVICE)}
-producer_config = {'bootstrap.servers': '{}:9092'.format(KAFKA_SERVICE),'client.id': 'fastapi-producer'}
-
+admin_config = {'bootstrap.servers': 'kafka:9092'}
 
 app = FastAPI()
+
+@app.post("/kafka-topic-create")
+async def setup(topic: KafkaTopic):
+    admin_client = AdminClient(admin_config)
+    new_topic = NewTopic(topic.topic, topic.num_partitions, topic.replication_factor)
+    admin_client.create_topics([new_topic])
+    print(admin_client.list_topics().topics)
+    return {"Kafka": "Topic created"}
 
 from channels.ecommerce.ecommerce import app as ecommerce
 app.include_router(ecommerce.router)
