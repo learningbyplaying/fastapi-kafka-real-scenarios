@@ -20,7 +20,6 @@ sudo docker-compose -f consumers.yml up -d
 
 
 
-
 ## Business requirements
 
   The application has to gather all the user activity of different sources, the data set resultant called "Events".

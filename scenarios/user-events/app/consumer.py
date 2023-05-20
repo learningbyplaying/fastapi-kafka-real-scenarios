@@ -1,50 +1,52 @@
-from confluent_kafka import Consumer, KafkaError, avro
+from confluent_kafka import avro
+import io
 import time, json, argparse
 
-conf = {
-    'bootstrap.servers': 'kafka:9092',
-    'auto.offset.reset': 'earliest',
-    'enable.auto.commit': True,
-    'group.id': 'my-group',
-    'api.version.request': True,
-    'api.version.fallback.ms': 0
-}
+from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka.schema_registry.avro import AvroDeserializer
+from confluent_kafka.deserializing_consumer import DeserializingConsumer
+
 
 def consume_messages(channel):
 
     base_path = '/app/channels/{}'.format(channel)
-    avro_schema = avro.load('{}/schema.avsc'.format(base_path))
+    schema_str = open(f"{base_path}/schema.avsc").read()
     json_file = "{}/topic.json".format(base_path)
-
     json_data = json.load(open(json_file))
     topic = json_data['topic']
-    print(topic)
 
-    consumer = Consumer(conf)
+    # The AVRO Schema
+    schema_registry_configuration = {
+        "url": "http://schema-registry:8081",
+    }
+    schema_registry_client = SchemaRegistryClient(schema_registry_configuration)
+
+    serializer = AvroDeserializer(schema_str=schema_str, schema_registry_client=schema_registry_client)
+
+    conf = {
+        'bootstrap.servers': 'kafka:9092',
+        'auto.offset.reset': 'earliest',
+        'enable.auto.commit': True,
+        'group.id': 'my-group',
+        'api.version.request': True,
+        'api.version.fallback.ms': 0,
+        "value.deserializer": serializer,  # Serializer used for message values.
+    }
+
+    consumer = DeserializingConsumer(conf)
     consumer.subscribe([topic])
+    
+    while True:
+        message = consumer.poll(timeout=5.0)
+        # id created to track logic through logs
+        if message is None:
+            continue
+        else:
+            print(message.value())
+        consumer.commit(asynchronous=True)
 
-    try:
-        while True:
-            msg = consumer.poll(1.0)
+    consumer.close()
 
-            if msg is None:
-                continue
-
-            if msg.error():
-                if msg.error().code() == KafkaError._PARTITION_EOF:
-                    print(f'Reached end of partition: {msg.topic()}[{msg.partition()}]')
-                else:
-                    print(f'Error while consuming messages: {msg.error()}')
-            else:
-                print(f"Received message: {msg.value().decode('utf-8')}")
-
-    except Exception as e:
-        print(f"Exception occurred while consuming messages: {e}")
-    finally:
-        consumer.close()
-
-def startup(channel):
-    consume_messages(channel)
 
 if __name__ == "__main__":
 
@@ -53,10 +55,7 @@ if __name__ == "__main__":
     channel = parser.parse_args().channel
 
     while True:
-        try:
-            print("Starting consumer...")
-            startup(channel)
-        except Exception as e:
-            print(f"Exception occurred: {e}")
-
-        time.sleep(5)  # Sleep for 1 second
+        #try:
+        print(">>Run batch consumer...")
+        consume_messages(channel)
+        time.sleep(2)
