@@ -21,7 +21,7 @@ conf = {
 
 def consume_messages():
     consumer = Consumer(conf)
-    consumer.subscribe([EVENTS_TOPIC])
+    consumer.subscribe([topic])
 
     try:
         while True:
