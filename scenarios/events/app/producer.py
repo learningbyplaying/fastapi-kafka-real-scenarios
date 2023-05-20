@@ -17,8 +17,9 @@ async def setup(topic: KafkaTopic):
     admin_client = AdminClient(admin_config)
     new_topic = NewTopic(topic.topic, topic.num_partitions, topic.replication_factor)
     admin_client.create_topics([new_topic])
-    print(admin_client.list_topics().topics)
-    return {"Kafka": "Topic created"}
+    topics  = admin_client.list_topics(topic=topic.topic).topics
+    return {"Message": "Kafka Topic created", "Items": topics}
+
 
 from channels.ecommerce.ecommerce import app as ecommerce
 app.include_router(ecommerce.router)
