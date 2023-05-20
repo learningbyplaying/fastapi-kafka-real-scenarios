@@ -1,10 +1,10 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import avro
 from confluent_kafka.avro import AvroProducer
 
-from .models import EcommerceMessage
 import os, json
 
 #Infraestructue
@@ -20,6 +20,14 @@ topic = json_data['topic']
 
 #endpoint
 app = FastAPI()
+
+class EcommerceMessage(BaseModel):
+    event_type: str
+    time: str
+    user_id: str
+    url: str
+    text: str
+
 @app.post("/events/gateway",  tags=['Ecommerce'])
 async def events(message: EcommerceMessage):
     #print(message.dict())
