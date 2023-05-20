@@ -17,10 +17,10 @@ services:
     volumes:
      - ./app:/app
     ports:
-     - "8080:80"
+     - "8000:80"
     environment:
      - PORT=80
-    command: python -u consumer.py
+    command: python -u test.py
     #sleep infinity
     depends_on:
      - producer
