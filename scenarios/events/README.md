@@ -1,3 +1,8 @@
+Setup
+
+sudo docker-compose -f kafka-environment.yml --project-name app up -d
+sudo docker-compose -f app.yml --project-name app up -d
+
 # FastAPI Kafka Events
 
 
