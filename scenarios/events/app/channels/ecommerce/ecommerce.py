@@ -38,7 +38,7 @@ async def setup():
 async def producer(message: EcommerceMessage):
 
 
-    print(message)
+    print(message.dict())
 
     producer = Producer(producer_config)
     producer.produce(topic, value=message.text.encode('utf-8'))
