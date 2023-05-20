@@ -23,11 +23,9 @@ replication_factor = 1  # Specify the replication factor for the topic
 
 app = FastAPI()
 
-
-@app.post("/ecommerce/producer")
-async def producer(message: EcommerceMessage):
+@app.post("/events/gateway",  tags=['Ecommerce'])
+async def events(message: EcommerceMessage):
     #print(message.dict())
-
     producer = AvroProducer(producer_config, default_value_schema=avro_schema)
     producer.produce(topic=topic, value=message.dict())
     producer.flush()
