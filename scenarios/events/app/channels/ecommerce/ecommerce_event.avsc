@@ -1,0 +1,30 @@
+{
+  "schema":
+     "{
+          \"type\": \"record\",
+          \"name\": \"ecommerce_event\",
+          \"fields\":
+            [
+              {
+                \"type\": \"string\",
+                \"name\": \"event_type\"
+              },
+              {
+                \"type\": \"string\",
+                \"name\": \"time\"
+              },
+              {
+                \"type\": \"string\",
+                \"name\": \"user_id\"
+              },
+              {
+                \"type\": \"string\",
+                \"name\": \"url\"
+              },
+              {
+                \"type\": \"string\",
+                \"name\": \"text\"
+              }
+            ]
+      }"
+}

@@ -1,9 +1,18 @@
 {
-  "type": "record",
-  "name": "User",
-  "fields": [
-    {"name": "id", "type": "int"},
-    {"name": "name", "type": "string"},
-    {"name": "email", "type": "string"}
-  ]
+  "schema":
+     "{
+            \"type\": \"record\",
+            \"name\": \"test\",
+            \"fields\":
+              [
+                {
+                  \"type\": \"string\",
+                  \"name\": \"field1\"
+                },
+                {
+                  \"type\": \"int\",
+                  \"name\": \"field2\"
+                }
+              ]
+      }"
 }
