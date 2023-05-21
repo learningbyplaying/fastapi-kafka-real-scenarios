@@ -57,8 +57,9 @@ class KafkaConsumer:
             if message is None:
                 continue
             else:
-                print(message.value(), message.key)
-                datastore.store( message.key, message.value(), self.num_partitions)
+                data = message.value()
+                print(data, message.key)
+                datastore.store( message.key, data, self.num_partitions)
                 #Sink into datalake
 
             self.consumer.commit(asynchronous=True)

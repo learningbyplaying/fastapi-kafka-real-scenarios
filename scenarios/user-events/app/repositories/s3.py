@@ -9,13 +9,14 @@ class S3DataStore:
         self.bucket = kwargs.get('bucket')
         self.prefix = kwargs.get('prefix')
 
-        #self.client = boto3.client('s3')
+        self.client = boto3.client('s3')
+        """
         self.client = boto3.resource('s3',
             aws_access_key_id= os.getenv("AWS_ACCESS_KEY_ID"),
             aws_secret_access_key= os.getenv("AWS_SECRET_ACCESS_KEY"),
             region_name= os.getenv("AWS_DEFAULT_REGION")
         )
-
+        """
     # Define a partitioner function to determine the S3 partition path based on the message key
     def partitioner(self,key,num_partitions):
         partition_id = hash(key) % num_partitions
@@ -30,6 +31,7 @@ class S3DataStore:
         partition_path = self.partitioner(key, num_partitions)
         # Convert Avro record to JSON
         json_message = json.dumps(value)
+        data_bytes = json.dumps(value).encode('utf-8')
         # Generate a unique file name for each message based on the current timestamp
         file_name = f"{int(time.time() * 1000)}.json"
 
@@ -37,15 +39,8 @@ class S3DataStore:
         prefix = self.prefix
         s3_key = f"{prefix}{partition_path}{file_name}"
 
-        print(self.bucket,s3_key,json_message)
+        print(self.bucket,s3_key,data_bytes)
 
-        # Write the message to S3
-        #result = self.client.put_object(
-        #    Bucket=self.bucket,
-        #    Key=s3_key,
-        #    Body=json_message
-        #)
-
-        result = self.client.Object(self.bucket,s3_key).put(Body=json_message)
+        result = self.client.put_object(Body=data_bytes, Bucket=self.bucket, Key=s3_key)
 
         print(result)
