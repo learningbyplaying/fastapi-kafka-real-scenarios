@@ -4,6 +4,7 @@ from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.deserializing_consumer import DeserializingConsumer
 from confluent_kafka.avro import AvroProducer
 
+from datetime import datetime
 import os, time, json
 
 class KafkaProducer:
@@ -24,12 +25,14 @@ class KafkaProducer:
 
 class Batch:
 
-    def __init__(self,consumer):
+    def __init__(self,**kwargs):
 
-        self.consumer = consumer
+        self.consumer = kwargs.get('consumer')
+        self.num_partitions = kwargs.get('num_partitions')
+
         self.batch_size_max = 100
         self.minutes_timeout = 1 #30
-        self.batch_timeout = 60 * self.minutes_timeout   # Timeout in seconds
+        self.batch_timeout = 10 #60 * self.minutes_timeout   # Timeout in seconds
         self.batch_start = time.time()
         self.batch = []
 
@@ -57,14 +60,22 @@ class Batch:
 
     def release(self):
 
-        if len(self.batch) > 0:
+        print('>> Release Batch ', len(self.batch))
 
+        if len(self.batch) > 0:
             partition = self.batch[0].partition()
             partition_id = hash(partition) % self.num_partitions
-            release = {"partition_id": partition_id, "batch": self.batch}
+            partition_path = self.partitioner(partition_id)
+            return {"partition_id": partition_id, "partition_path": partition_path, "batch": self.batch}
 
-        print('>> Release Batch ', len(self.batch))
-        return self
+        return None
+
+    def partitioner(self, partition_id):
+
+        current_time = datetime.utcnow()
+        partition_path = f"year={current_time.year:04}/month={current_time.month:02}/day={current_time.day:02}/hour={current_time.hour:02}/partition={partition_id}/"
+        return partition_path
+
 
 
 class KafkaConsumer:
@@ -96,16 +107,15 @@ class KafkaConsumer:
         self.consumer = DeserializingConsumer(conf)
         self.consumer.subscribe([ self.topic['topic'] ])
 
-
     def run(self, datastore):
 
         try:
             while True:
 
-                b = Batch( self.consumer  ).gather( ).release()
+                batch = Batch( consumer=self.consumer, num_partitions=self.num_partitions  ).gather( ).release()
+                if batch != None:
+                    datastore.topic_batch_store( batch['partition_path'], batch['batch'])
 
-                #batch_parsed = self.parse_batch(batch)
-                #datastore.topic_batch_store( message.key, batch_parsed, self.num_partitions)
         except KeyboardInterrupt:
             # Stop the Kafka consumer on keyboard interrupt
             self.consumer.close()

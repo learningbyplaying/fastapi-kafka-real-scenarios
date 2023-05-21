@@ -17,33 +17,19 @@ class S3DataStore:
             region_name= os.getenv("AWS_DEFAULT_REGION")
         )
 
+    def topic_batch_store(self, partition_path, batch):
 
+        data_bytes = json.dumps(batch).encode('utf-8')
 
-    def partitioner(self, key, num_partitions):
+        prefix = self.prefix
+        file_name = f"{int(time.time() * 1000)}.json"
+        s3_key = f"{prefix}{partition_path}{file_name}"
 
-        partition_id = hash(key) % num_partitions
-        current_time = datetime.utcnow()
-        partition_path = f"year={current_time.year:04}/month={current_time.month:02}/day={current_time.day:02}/hour={current_time.hour:02}/partition={partition_id}/"
+        print(self.bucket,s3_key,data_bytes)
+        object = self.client.Object(self.bucket, s3_key)
+        object.put(Body=data_bytes)
+        print(object)
 
-        return partition_path
-
-    def topic_batch_store(self, batch):
-
-        data = []
-        for message in batch:
-            if message is None:
-                continue
-            if message.error():
-                if message.error().code() == KafkaError._PARTITION_EOF:
-                    # End of partition, continue to the next message
-                    continue
-                else:
-                    # Handle other errors
-                    raise KafkaException(message.error())
-
-            # Process the individual message
-            processed_message = process_message(message.value())
-            data.append(processed_message)
 
     def topic_store(self, key, value, num_partitions):
 
@@ -55,8 +41,6 @@ class S3DataStore:
         s3_key = f"{prefix}{partition_path}{file_name}"
 
         print(self.bucket,s3_key,data_bytes)
-
-
         object = self.client.Object(self.bucket, s3_key)
         object.put(Body=data_bytes)
         print(object)
