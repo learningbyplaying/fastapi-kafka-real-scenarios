@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-def consume_messages(source):
+def consume_events(source):
 
     base_path = os.getenv("base_path")
     source_path = f"{base_path}/{source}"
@@ -22,6 +22,7 @@ def consume_messages(source):
     json_file = f"{source_path}/topic.json"
     json_data = json.load(open(json_file))
     topic = json_data['topic']
+    num_partitions = json_data['num_partitions']
 
     serializer = AvroDeserializer(schema_str=schema_str, schema_registry_client=schema_registry_client)
 
@@ -44,7 +45,7 @@ def consume_messages(source):
         if message is None:
             continue
         else:
-            print(message.value())
+            print(message.value(), message.key)
             #Sink into datalake
 
         consumer.commit(asynchronous=True)
@@ -61,5 +62,5 @@ if __name__ == "__main__":
     while True:
         #try:
         print(">>Run batch consumer...")
-        consume_messages(source)
+        consume_events(source)
         time.sleep(2)
