@@ -18,12 +18,21 @@ class S3DataStore:
         )
 
     # Define a partitioner function to determine the S3 partition path based on the message key
-    def partitioner(self,key,num_partitions):
+    def partitioner_old(self,key,num_partitions):
         partition_id = hash(key) % num_partitions
         current_time = datetime.utcnow()
-        partition_path = f"/YEAR={current_time.year}/MONTH={current_time.month}/DAY={current_time.day}/HOUR={current_time.hour}/PARTITION={partition_id}/"
+        partition_path = f"/year={current_time.year}/month={current_time.month}/day={current_time.day}/hour={current_time.hour}/partition={partition_id}/"
+        return partition_path
+
+
+    def partitioner(self, key, num_partitions):
+
+        partition_id = hash(key) % num_partitions
+        current_time = datetime.utcnow()
+        partition_path = f"year={current_time.year:04}/month={current_time.month:02}/day={current_time.day:02}/hour={current_time.hour:02}/partition={partition_id}/"
 
         return partition_path
+
 
     def store(self, key, value, num_partitions):
 
