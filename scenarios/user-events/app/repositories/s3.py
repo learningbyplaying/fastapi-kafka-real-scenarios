@@ -19,10 +19,10 @@ class S3Store:
 
         return partition_path
 
-    def store(self, key, value):
+    def store(self, key, value, num_partitions):
 
         # Get the current S3 partition path based on the message key
-        partition_path = self.partitioner(key)
+        partition_path = self.partitioner(key, num_partitions)
         # Convert Avro record to JSON
         json_message = json.dumps(value)
         # Generate a unique file name for each message based on the current timestamp
