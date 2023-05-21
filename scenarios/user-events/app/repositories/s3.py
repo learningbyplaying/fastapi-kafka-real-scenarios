@@ -8,7 +8,7 @@ class S3DataStore:
 
         self.bucket = kwargs.get('bucket')
         self.prefix = kwargs.get('prefix')
-        
+
         self.client = boto3.resource('s3',
             aws_access_key_id= os.getenv("AWS_ACCESS_KEY_ID"),
             aws_secret_access_key= os.getenv("AWS_SECRET_ACCESS_KEY"),
@@ -20,21 +20,6 @@ class S3DataStore:
         data_bytes = json.dumps(data).encode('utf-8')
 
         prefix = self.prefix
-        file_name = f"{int(time.time() * 1000)}.json"
-        s3_key = f"{prefix}{partition_path}{file_name}"
-
-        print(self.bucket,s3_key,data_bytes)
-        object = self.client.Object(self.bucket, s3_key)
-        object.put(Body=data_bytes)
-        print(object)
-
-
-    def topic_store(self, key, value, num_partitions):
-
-        data_bytes = json.dumps(value).encode('utf-8')
-
-        prefix = self.prefix
-        partition_path = self.partitioner(key, num_partitions)
         file_name = f"{int(time.time() * 1000)}.json"
         s3_key = f"{prefix}{partition_path}{file_name}"
 
