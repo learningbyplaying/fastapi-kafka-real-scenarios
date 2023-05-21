@@ -31,8 +31,8 @@ class Batch:
         self.num_partitions = kwargs.get('num_partitions')
 
         self.batch_size_max = 100
-        self.minutes_timeout = 1 #30
-        self.batch_timeout = 10 #60 * self.minutes_timeout   # Timeout in seconds
+        self.minutes_timeout = 30
+        self.batch_timeout = 60 * self.minutes_timeout   # Timeout in seconds
         self.batch_start = time.time()
         self.partition = None
         self.batch = []
