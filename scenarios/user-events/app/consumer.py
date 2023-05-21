@@ -1,6 +1,7 @@
 import time, json, argparse, os
 from dotenv import load_dotenv
 load_dotenv()
+load_dotenv(env)
 
 from repositories.kafka import KafkaConsumer
 
