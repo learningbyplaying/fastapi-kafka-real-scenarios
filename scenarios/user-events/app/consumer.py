@@ -33,4 +33,4 @@ if __name__ == "__main__":
         #try:
         print(">>Run batch consumer...")
         run(source)
-        time.sleep(2)
+        time.sleep(5)
