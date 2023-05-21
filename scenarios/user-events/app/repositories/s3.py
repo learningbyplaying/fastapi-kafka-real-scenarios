@@ -34,31 +34,18 @@ class S3DataStore:
         return partition_path
 
 
-    def store(self, key, value, num_partitions):
+    def topic_store(self, key, value, num_partitions):
 
-        # Get the current S3 partition path based on the message key
-        partition_path = self.partitioner(key, num_partitions)
-        # Convert Avro record to JSON
-        json_message = json.dumps(value)
         data_bytes = json.dumps(value).encode('utf-8')
-        # Generate a unique file name for each message based on the current timestamp
-        file_name = f"{int(time.time() * 1000)}.json"
 
-        # Prepare the S3 object key
         prefix = self.prefix
+        partition_path = self.partitioner(key, num_partitions)
+        file_name = f"{int(time.time() * 1000)}.json"
         s3_key = f"{prefix}{partition_path}{file_name}"
 
         print(self.bucket,s3_key,data_bytes)
 
 
-        some_binary_data = b'Here we have some data'
-        more_binary_data = b'Here we have some more data'
-        object = self.client.Object(self.bucket, 'my/key/including/filename.txt')
-        object.put(Body=some_binary_data)
-
         object = self.client.Object(self.bucket, s3_key)
         object.put(Body=data_bytes)
-
-        #result = self.client.put_object(Body=data_bytes, Bucket=self.bucket, Key=s3_key)
-
         print(object)
