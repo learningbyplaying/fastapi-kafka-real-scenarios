@@ -24,5 +24,4 @@ async def setup(topic: KafkaTopic):
     new_topic = NewTopic(topic.topic, topic.num_partitions, topic.replication_factor)
     admin_client.create_topics([new_topic])
     topics  = admin_client.list_topics(topic=topic.topic).topics
-    
     return {"Message": "Kafka Topic created", "Items": topics}

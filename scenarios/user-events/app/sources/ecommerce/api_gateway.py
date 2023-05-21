@@ -20,7 +20,6 @@ producer_config = {'bootstrap.servers': os.getenv("bootstrap.servers"),'client.i
 avro_schema = avro.load(f"{source_path}/schema.avsc")
 topic_data = json.load(open( f"{source_path}/topic.json"))
 
-
 #endpoint
 app = FastAPI()
 

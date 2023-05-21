@@ -1,14 +1,4 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-
-from confluent_kafka import Producer
-from confluent_kafka.admin import AdminClient, NewTopic
-
-## Settings
-from dotenv import load_dotenv
-import os
-load_dotenv()
-admin_config = {'bootstrap.servers': os.getenv("bootstrap.servers")}
 
 ## Application
 app = FastAPI()
