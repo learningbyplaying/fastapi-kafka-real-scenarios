@@ -1,17 +1,14 @@
 from fastapi import FastAPI
-from datetime import datetime, timezone, timedelta
-from uuid import uuid4
 from pydantic import BaseModel, Field
+from datetime import datetime, timezone, timedelta
 
-from confluent_kafka.admin import AdminClient, NewTopic
-from confluent_kafka import avro
-from confluent_kafka.avro import AvroProducer
+
+from repositories.kafka import KafkaProducer
 
 import os, json
-
+from confluent_kafka import avro
 ## Settings
 from dotenv import load_dotenv
-import os
 load_dotenv()
 
 #Infraestructue
@@ -21,9 +18,8 @@ producer_config = {'bootstrap.servers': os.getenv("bootstrap.servers"),'client.i
 
 #Schema
 avro_schema = avro.load(f"{source_path}/schema.avsc")
-json_file = f"{source_path}/topic.json"
-json_data = json.load(open(json_file))
-topic = json_data['topic']
+topic_data = json.load(open( f"{source_path}/topic.json"))
+
 
 #endpoint
 app = FastAPI()
@@ -44,11 +40,9 @@ async def events(event: EcommerceEvent):
     event_dict = event.dict()
     del event_dict['created_date']
     event_dict['epoch'] = int(event.created_date.timestamp())
-
     #print(event_dict)
 
+    kp = KafkaProducer(topic=topic_data,schema=avro_schema,config=producer_config)
+    kp.run(event_dict)
 
-    producer = AvroProducer(producer_config, default_value_schema=avro_schema)
-    producer.produce(topic=topic, value=event_dict)
-    producer.flush()
     return {"Kafka": "EcommerceMessage"}

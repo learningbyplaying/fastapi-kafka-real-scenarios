@@ -2,10 +2,25 @@ from confluent_kafka import avro
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.deserializing_consumer import DeserializingConsumer
+from confluent_kafka.avro import AvroProducer
 
-## Settings
-import os,  time, json
+import os, time, json
 
+
+class KafkaProducer:
+
+    def __init__(self,**kwargs):
+
+        self.topic = kwargs.get('topic')
+        self.schema = kwargs.get('schema')
+        self.config = kwargs.get('config')
+
+        self.producer = AvroProducer(self.config, default_value_schema=self.schema)
+
+    def run(self,message):
+
+        self.producer.produce(topic=self.topic['topic'], value=message)
+        self.producer.flush()
 
 class KafkaConsumer:
 
