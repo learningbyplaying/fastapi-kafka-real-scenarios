@@ -16,7 +16,7 @@ class S3DataStore:
     def partitioner(self,key,num_partitions):
         partition_id = hash(key) % num_partitions
         current_time = datetime.utcnow()
-        partition_path = f"{current_time.year}/{current_time.month}/{current_time.day}/{current_time.hour}/{partition_id}/"
+        partition_path = f"/YEAR={current_time.year}/MONTH={current_time.month}/DAY={current_time.day}/HOUR={current_time.hour}/PARTITION={partition_id}/"
 
         return partition_path
 
@@ -33,9 +33,14 @@ class S3DataStore:
         prefix = self.prefix
         s3_key = f"{prefix}{partition_path}{file_name}"
 
+        print(self.bucket,s3_key,json_message)
+
         # Write the message to S3
         result = self.client.put_object(
             Bucket=self.bucket,
             Key=s3_key,
             Body=json_message
         )
+
+
+        print(result)
