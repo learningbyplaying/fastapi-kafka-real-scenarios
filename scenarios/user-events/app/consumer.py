@@ -6,27 +6,27 @@ from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.deserializing_consumer import DeserializingConsumer
 
+## Settings
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
-def consume_messages(channel):
+def consume_messages(source):
 
-    base_path = f"/app/sources/{channel}"
-
-    schema_registry_configuration = {
-        "url": "http://schema-registry:8081",
-    }
-    schema_registry_client = SchemaRegistryClient(schema_registry_configuration)
-
-    schema_str = open(f"{base_path}/schema.avsc").read()
-    json_file = "{}/topic.json".format(base_path)
-    json_data = json.load(open(json_file))
-    topic = json_data['topic']
+    base_path = os.getenv("base_path")
+    source_path = f"{base_path}/{source}"
+    schema_registry_client = SchemaRegistryClient( {"url": os.getenv("schema_registry_url") } )
 
     # The AVRO Schema
+    schema_str = open(f"{source_path}/schema.avsc").read()
+    json_file = f"{source_path}/topic.json"
+    json_data = json.load(open(json_file))
+    topic = json_data['topic']
 
     serializer = AvroDeserializer(schema_str=schema_str, schema_registry_client=schema_registry_client)
 
     conf = {
-        'bootstrap.servers': 'kafka:9092',
+        'bootstrap.servers': os.getenv("bootstrap.servers"), #'kafka:9092',
         'auto.offset.reset': 'earliest',
         'enable.auto.commit': True,
         'group.id': 'my-group',
@@ -53,11 +53,11 @@ def consume_messages(channel):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description = 'Example with non-optional arguments')
-    parser.add_argument('--channel', action = "store")
-    channel = parser.parse_args().channel
+    parser.add_argument('--source', action = "store")
+    source = parser.parse_args().source
 
     while True:
         #try:
         print(">>Run batch consumer...")
-        consume_messages(channel)
+        consume_messages(source)
         time.sleep(2)

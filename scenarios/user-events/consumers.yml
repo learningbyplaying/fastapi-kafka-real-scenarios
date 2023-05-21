@@ -11,5 +11,5 @@ services:
      - "8000:80"
     environment:
      - PORT=80
-    command: python -u consumer.py --channel ecommerce
+    command: python -u consumer.py --source ecommerce
     #command: sleep infinity
