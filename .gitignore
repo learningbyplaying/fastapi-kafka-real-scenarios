@@ -10,3 +10,5 @@
 # Unit test reports
 #.env
 .credentials
+
+__pycache__/

@@ -17,12 +17,6 @@ class S3DataStore:
             region_name= os.getenv("AWS_DEFAULT_REGION")
         )
 
-    # Define a partitioner function to determine the S3 partition path based on the message key
-    def partitioner_old(self,key,num_partitions):
-        partition_id = hash(key) % num_partitions
-        current_time = datetime.utcnow()
-        partition_path = f"/year={current_time.year}/month={current_time.month}/day={current_time.day}/hour={current_time.hour}/partition={partition_id}/"
-        return partition_path
 
 
     def partitioner(self, key, num_partitions):
@@ -33,6 +27,23 @@ class S3DataStore:
 
         return partition_path
 
+    def topic_batch_store(self, batch):
+
+        data = []
+        for message in batch:
+            if message is None:
+                continue
+            if message.error():
+                if message.error().code() == KafkaError._PARTITION_EOF:
+                    # End of partition, continue to the next message
+                    continue
+                else:
+                    # Handle other errors
+                    raise KafkaException(message.error())
+
+            # Process the individual message
+            processed_message = process_message(message.value())
+            data.append(processed_message)
 
     def topic_store(self, key, value, num_partitions):
 

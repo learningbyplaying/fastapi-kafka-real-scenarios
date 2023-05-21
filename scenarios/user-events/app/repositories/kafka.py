@@ -1,4 +1,4 @@
-from confluent_kafka import avro
+from confluent_kafka import avro, KafkaException
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.deserializing_consumer import DeserializingConsumer
@@ -44,6 +44,7 @@ class KafkaConsumer:
             'api.version.request': True,
             'api.version.fallback.ms': 0,
             "value.deserializer": serializer,
+            #'max.poll.records': 100
         }
 
         self.consumer = DeserializingConsumer(conf)
@@ -51,14 +52,34 @@ class KafkaConsumer:
 
     def run(self, datastore):
 
-        while True:
-            message = self.consumer.poll(timeout=5.0)
-            # id created to track logic through logs
-            if message is None:
-                continue
-            else:
-                datastore.topic_store( message.key, message.value(), self.num_partitions)
+        try:
+            while True:
 
-            self.consumer.commit(asynchronous=True)
+                # Poll for new messages from Kafka
+                batch = []
+                while len(batch) < 100:
+                    message = consumer.poll(timeout=1.0)  # Poll for a single message
+                    if message is None:
+                        break
+                    elif not message.error():
+                    batch.append(message)
+
+                if len(batch) > 0:
+                    partition = batch[0].partition()
+                    partition_id = hash(partition) % self.num_partitions
+                    print(partition_id, partition)
+                    #batch_parsed = self.parse_batch(batch)
+                    #datastore.topic_batch_store( message.key, batch_parsed, self.num_partitions)
+        except KeyboardInterrupt:
+            # Stop the Kafka consumer on keyboard interrupt
+            self.consumer.close()
+
+            #message = self.consumer.poll(timeout=5.0)
+            # id created to track logic through logs
+            #if message is None:
+            #    continue
+            #else:
+            #    datastore.topic_store( message.key, message.value(), self.num_partitions)
+            #self.consumer.commit(asynchronous=True)
 
         self.consumer.close()
