@@ -53,8 +53,7 @@ class Batch:
                 self.batch.append(message)
 
         print('>> Gather Batch ', len(self.batch))
-
-
+        return self
 
     def release(self):
 
@@ -65,6 +64,7 @@ class Batch:
             release = {"partition_id": partition_id, "batch": self.batch}
 
         print('>> Release Batch ', len(self.batch))
+        return self
 
 
 class KafkaConsumer:
