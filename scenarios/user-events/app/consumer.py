@@ -4,7 +4,7 @@ load_dotenv()
 
 from repositories.kafka import KafkaConsumer
 
-def consume_events(source):
+def run(source):
 
     schema_registry_url = os.getenv("schema_registry_url")
     bootstrap_servers = os.getenv("bootstrap.servers")
@@ -32,5 +32,5 @@ if __name__ == "__main__":
     while True:
         #try:
         print(">>Run batch consumer...")
-        consume_events(source)
+        run(source)
         time.sleep(2)
