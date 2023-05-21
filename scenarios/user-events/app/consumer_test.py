@@ -23,7 +23,6 @@ def consume_events(source):
 
     kc.run()
 
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description = 'Example with non-optional arguments')
