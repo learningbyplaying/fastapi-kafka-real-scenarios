@@ -1,5 +1,7 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from datetime import datetime, timezone, timedelta
+from uuid import uuid4
+from pydantic import BaseModel, Field
 
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import avro
@@ -32,11 +34,21 @@ class EcommerceEvent(BaseModel):
     user_id: str
     url: str
     text: str
+    created_date: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc)
+    )
 
 @app.post("/events/gateway",  tags=['Ecommerce'])
-async def events(message: EcommerceEvent):
-    #print(message.dict())
+async def events(event: EcommerceEvent):
+
+    event_dict = event.dict()
+    del event_dict['created_date']
+    event_dict['epoch'] = int(event.created_date.timestamp())
+
+    #print(event_dict)
+
+
     producer = AvroProducer(producer_config, default_value_schema=avro_schema)
-    producer.produce(topic=topic, value=message.dict())
+    producer.produce(topic=topic, value=event_dict)
     producer.flush()
     return {"Kafka": "EcommerceMessage"}
