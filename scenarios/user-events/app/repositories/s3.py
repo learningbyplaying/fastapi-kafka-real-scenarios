@@ -8,18 +8,16 @@ class S3DataStore:
 
         self.bucket = kwargs.get('bucket')
         self.prefix = kwargs.get('prefix')
-
-        #self.client = boto3.client('s3')
-
+        
         self.client = boto3.resource('s3',
             aws_access_key_id= os.getenv("AWS_ACCESS_KEY_ID"),
             aws_secret_access_key= os.getenv("AWS_SECRET_ACCESS_KEY"),
             region_name= os.getenv("AWS_DEFAULT_REGION")
         )
 
-    def topic_batch_store(self, partition_path, batch):
+    def store(self, partition_path, data):
 
-        data_bytes = json.dumps(batch).encode('utf-8')
+        data_bytes = json.dumps(data).encode('utf-8')
 
         prefix = self.prefix
         file_name = f"{int(time.time() * 1000)}.json"

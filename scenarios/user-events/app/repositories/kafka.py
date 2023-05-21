@@ -34,6 +34,7 @@ class Batch:
         self.minutes_timeout = 1 #30
         self.batch_timeout = 10 #60 * self.minutes_timeout   # Timeout in seconds
         self.batch_start = time.time()
+        self.partition = None
         self.batch = []
 
         print('>> Init Batch ',self.batch_start, len(self.batch))
@@ -53,7 +54,9 @@ class Batch:
                 print(">> No Message",diff, len(self.batch))
                 continue
             elif not message.error():
-                self.batch.append(message)
+
+                self.partition = message.partition()
+                self.batch.append(message.value())
 
         print('>> Gather Batch ', len(self.batch))
         return self
@@ -63,19 +66,16 @@ class Batch:
         print('>> Release Batch ', len(self.batch))
 
         if len(self.batch) > 0:
-            partition = self.batch[0].partition()
+            partition = self.partition #self.batch[0].partition()
             partition_id = hash(partition) % self.num_partitions
             partition_path = self.partitioner(partition_id)
             return {"partition_id": partition_id, "partition_path": partition_path, "batch": self.batch}
-
         return None
 
     def partitioner(self, partition_id):
-
         current_time = datetime.utcnow()
         partition_path = f"year={current_time.year:04}/month={current_time.month:02}/day={current_time.day:02}/hour={current_time.hour:02}/partition={partition_id}/"
         return partition_path
-
 
 
 class KafkaConsumer:
@@ -110,20 +110,12 @@ class KafkaConsumer:
     def run(self, datastore):
 
         try:
+
             while True:
 
                 batch = Batch( consumer=self.consumer, num_partitions=self.num_partitions  ).gather( ).release()
                 if batch != None:
-                    datastore.topic_batch_store( batch['partition_path'], batch['batch'])
+                    datastore.store( batch['partition_path'], batch['batch'])
 
         except KeyboardInterrupt:
-            # Stop the Kafka consumer on keyboard interrupt
             self.consumer.close()
-
-            #message = self.consumer.poll(timeout=5.0)
-            # id created to track logic through logs
-            #if message is None:
-            #    continue
-            #else:
-            #    datastore.topic_store( message.key, message.value(), self.num_partitions)
-            #self.consumer.commit(asynchronous=True)
