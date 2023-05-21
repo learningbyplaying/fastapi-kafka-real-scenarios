@@ -6,7 +6,6 @@ from confluent_kafka.avro import AvroProducer
 
 import os, time, json
 
-
 class KafkaProducer:
 
     def __init__(self,**kwargs):
