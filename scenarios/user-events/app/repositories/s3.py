@@ -9,14 +9,14 @@ class S3DataStore:
         self.bucket = kwargs.get('bucket')
         self.prefix = kwargs.get('prefix')
 
-        self.client = boto3.client('s3')
-        """
+        #self.client = boto3.client('s3')
+
         self.client = boto3.resource('s3',
             aws_access_key_id= os.getenv("AWS_ACCESS_KEY_ID"),
             aws_secret_access_key= os.getenv("AWS_SECRET_ACCESS_KEY"),
             region_name= os.getenv("AWS_DEFAULT_REGION")
         )
-        """
+
     # Define a partitioner function to determine the S3 partition path based on the message key
     def partitioner(self,key,num_partitions):
         partition_id = hash(key) % num_partitions
@@ -41,6 +41,15 @@ class S3DataStore:
 
         print(self.bucket,s3_key,data_bytes)
 
-        result = self.client.put_object(Body=data_bytes, Bucket=self.bucket, Key=s3_key)
 
-        print(result)
+        some_binary_data = b'Here we have some data'
+        more_binary_data = b'Here we have some more data'
+        object = self.client.Object(self.bucket, 'my/key/including/filename.txt')
+        object.put(Body=some_binary_data)
+
+        object = self.client.Object(self.bucket, s3_key)
+        object.put(Body=data_bytes)
+
+        #result = self.client.put_object(Body=data_bytes, Bucket=self.bucket, Key=s3_key)
+
+        print(object)
