@@ -28,7 +28,8 @@ class Batch:
 
         self.consumer = consumer
         self.batch_size_max = 100
-        self.batch_timeout = 60 * 30   # Timeout in seconds
+        self.minutes_timeout = 1 #30
+        self.batch_timeout = 60 * self.minutes_timeout   # Timeout in seconds
         self.batch_start = time.time()
         self.batch = []
 
@@ -41,17 +42,19 @@ class Batch:
             current_at = time.time()
             diff = (current_at - self.batch_start)
             if diff > self.batch_timeout:
-                print(">> Batch timeout", len(self.batch))
+                print(">> Batch timeout", diff, len(self.batch))
                 break
 
             message = self.consumer.poll(timeout=1.0)  # Poll for a single message
             if message is None:
-                print(">> No Message", len(self.batch))
+                print(">> No Message",diff, len(self.batch))
                 continue
             elif not message.error():
                 self.batch.append(message)
 
         print('>> Gather Batch ', len(self.batch))
+
+
 
     def release(self):
 
