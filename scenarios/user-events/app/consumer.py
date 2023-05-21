@@ -13,6 +13,10 @@ def run(source):
     bootstrap_servers = os.getenv("bootstrap.servers")
     base_path = os.getenv("base_path")
 
+    #print( os.getenv("AWS_ACCESS_KEY_ID"))
+    #print( os.getenv("AWS_SECRET_ACCESS_KEY"))
+
+
     source_path = f"{base_path}/{source}"
     schema_str = open(f"{source_path}/schema.avsc").read()
     topic_data = json.load(open(f"{source_path}/topic.json"))
@@ -27,7 +31,7 @@ def run(source):
 
     prefix = f"/repositories/kafka/{topic_name}"
     ds = S3DataStore(bucket=bucket_datalake, prefix = prefix)
-    
+
     kc.run(ds)
 
 if __name__ == "__main__":

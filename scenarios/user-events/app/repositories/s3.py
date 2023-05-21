@@ -1,5 +1,5 @@
 from datetime import datetime
-import boto3, json, time
+import boto3, json, time, os
 
 
 class S3DataStore:
@@ -9,8 +9,12 @@ class S3DataStore:
         self.bucket = kwargs.get('bucket')
         self.prefix = kwargs.get('prefix')
 
-        self.client = boto3.client('s3')
-
+        #self.client = boto3.client('s3')
+        self.client = boto3.resource('s3',
+            aws_access_key_id= os.getenv("AWS_ACCESS_KEY_ID"),
+            aws_secret_access_key= os.getenv("AWS_SECRET_ACCESS_KEY"),
+            region_name= os.getenv("AWS_DEFAULT_REGION")
+        )
 
     # Define a partitioner function to determine the S3 partition path based on the message key
     def partitioner(self,key,num_partitions):
@@ -36,11 +40,12 @@ class S3DataStore:
         print(self.bucket,s3_key,json_message)
 
         # Write the message to S3
-        result = self.client.put_object(
-            Bucket=self.bucket,
-            Key=s3_key,
-            Body=json_message
-        )
+        #result = self.client.put_object(
+        #    Bucket=self.bucket,
+        #    Key=s3_key,
+        #    Body=json_message
+        #)
 
+        result = self.client.Object(self.bucket,s3_key).put(Body=json_message)
 
         print(result)
