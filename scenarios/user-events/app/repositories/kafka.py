@@ -30,7 +30,7 @@ class Batch:
         self.consumer = kwargs.get('consumer')
         self.num_partitions = kwargs.get('num_partitions')
 
-        self.batch_size_max = 100
+        self.batch_size_max = 10 #100
         self.minutes_timeout = 30
         self.batch_timeout = 60 * self.minutes_timeout   # Timeout in seconds
         self.batch_start = time.time()
