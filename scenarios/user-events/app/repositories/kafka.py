@@ -32,7 +32,7 @@ class KafkaConsumer:
 
         schema_registry_client = SchemaRegistryClient( {"url": self.schema_registry_url  } )
 
-        num_partitions = self.topic['num_partitions']
+        self.num_partitions = self.topic['num_partitions']
 
         serializer = AvroDeserializer(schema_str=self.schema, schema_registry_client=schema_registry_client)
 
@@ -49,7 +49,7 @@ class KafkaConsumer:
         self.consumer = DeserializingConsumer(conf)
         self.consumer.subscribe([ self.topic['topic'] ])
 
-    def run(self):
+    def run(self, datastore):
 
         while True:
             message = self.consumer.poll(timeout=5.0)
@@ -58,6 +58,7 @@ class KafkaConsumer:
                 continue
             else:
                 print(message.value(), message.key)
+                datastore.store( message.key, message.value(), self.num_partitions)
                 #Sink into datalake
 
             self.consumer.commit(asynchronous=True)

@@ -2,12 +2,13 @@ from datetime import datetime
 import boto3, json, time
 
 
-class S3Store:
+class S3DataStore:
 
     def __init__(self,**kwargs):
 
         self.bucket = kwargs.get('bucket')
         self.prefix = kwargs.get('prefix')
+
         self.client = boto3.client('s3')
 
 
@@ -33,7 +34,7 @@ class S3Store:
         s3_key = f"{prefix}{partition_path}{file_name}"
 
         # Write the message to S3
-        self.client.put_object(
+        result = self.client.put_object(
             Bucket=self.bucket,
             Key=s3_key,
             Body=json_message

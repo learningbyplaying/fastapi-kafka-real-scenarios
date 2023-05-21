@@ -1,12 +1,14 @@
 import time, json, argparse, os
 from dotenv import load_dotenv
 load_dotenv()
-load_dotenv(env)
+load_dotenv('/app/.credentials')
 
 from repositories.kafka import KafkaConsumer
+from repositories.s3 import S3DataStore
 
 def run(source):
 
+    bucket_datalake = os.getenv("bucket_datalake")
     schema_registry_url = os.getenv("schema_registry_url")
     bootstrap_servers = os.getenv("bootstrap.servers")
     base_path = os.getenv("base_path")
@@ -14,15 +16,19 @@ def run(source):
     source_path = f"{base_path}/{source}"
     schema_str = open(f"{source_path}/schema.avsc").read()
     topic_data = json.load(open(f"{source_path}/topic.json"))
+    topic_name = topic_data['topic']
 
     kc = KafkaConsumer(
         topic=topic_data,
         schema=schema_str,
         schema_registry_url=schema_registry_url,
-        bootstrap_servers=bootstrap_servers
+        bootstrap_servers=bootstrap_servers,
     )
 
-    kc.run()
+    prefix = f"/repositories/kafka/{topic_name}"
+    ds = S3DataStore(bucket=bucket_datalake, prefix = prefix)
+    
+    kc.run(ds)
 
 if __name__ == "__main__":
 

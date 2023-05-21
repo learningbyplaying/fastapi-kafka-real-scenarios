@@ -5,3 +5,4 @@ confluent-kafka[avro]
 python-dotenv==0.10.1
 urllib3
 requests
+boto3
