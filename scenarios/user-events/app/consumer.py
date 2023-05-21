@@ -29,7 +29,7 @@ def run(source):
         bootstrap_servers=bootstrap_servers,
     )
 
-    prefix = f"/repositories/kafka/{topic_name}"
+    prefix = f"repositories/kafka/topic={topic_name}"
     ds = S3DataStore(bucket=bucket_datalake, prefix = prefix)
 
     kc.run(ds)
