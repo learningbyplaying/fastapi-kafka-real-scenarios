@@ -7,7 +7,7 @@ sudo docker-compose -f ingestion-environment.yml up -d
 ## Setup channel "Ecommerce":
 
 ```
-cd $REPO_PATH/scenarios/user-events/app && ./setup.sh channels/ecommerce/topic.json
+cd $REPO_PATH/scenarios/user-events/app && ./scripts/setup.sh channels/ecommerce/topic.json
 ```
 
 ## Setup consumers:

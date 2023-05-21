@@ -45,6 +45,8 @@ def consume_messages(source):
             continue
         else:
             print(message.value())
+            #Sink into datalake
+
         consumer.commit(asynchronous=True)
 
     consumer.close()
