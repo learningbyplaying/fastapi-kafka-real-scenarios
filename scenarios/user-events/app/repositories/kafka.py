@@ -21,6 +21,49 @@ class KafkaProducer:
         self.producer.produce(topic=self.topic['topic'], value=message)
         self.producer.flush()
 
+
+class Batch:
+
+    def __init__(self,consumer):
+
+        self.consumer = consumer
+        self.batch_size_max = 100
+        self.batch_timeout = 60 * 30   # Timeout in seconds
+        self.batch_start = time.time()
+        self.batch = []
+
+        print('>> Init Batch ',self.batch_start, len(self.batch))
+
+    def gather(self):
+
+        while len(self.batch) < self.batch_size_max:
+
+            current_at = time.time()
+            diff = (current_at - self.batch_start)
+            if diff > self.batch_timeout:
+                print(">> Batch timeout", len(self.batch))
+                break
+
+            message = self.consumer.poll(timeout=1.0)  # Poll for a single message
+            if message is None:
+                print(">> No Message", len(self.batch))
+                continue
+            elif not message.error():
+                self.batch.append(message)
+
+        print('>> Gather Batch ', len(self.batch))
+
+    def release(self):
+
+        if len(self.batch) > 0:
+
+            partition = self.batch[0].partition()
+            partition_id = hash(partition) % self.num_partitions
+            release = {"partition_id": partition_id, "batch": self.batch}
+
+        print('>> Release Batch ', len(self.batch))
+
+
 class KafkaConsumer:
 
     def __init__(self,**kwargs):
@@ -50,26 +93,16 @@ class KafkaConsumer:
         self.consumer = DeserializingConsumer(conf)
         self.consumer.subscribe([ self.topic['topic'] ])
 
+
     def run(self, datastore):
 
         try:
             while True:
 
-                # Poll for new messages from Kafka
-                batch = []
-                while len(batch) < 100:
-                    message = consumer.poll(timeout=1.0)  # Poll for a single message
-                    if message is None:
-                        break
-                    elif not message.error():
-                    batch.append(message)
+                b = Batch( self.consumer  ).gather( ).release()
 
-                if len(batch) > 0:
-                    partition = batch[0].partition()
-                    partition_id = hash(partition) % self.num_partitions
-                    print(partition_id, partition)
-                    #batch_parsed = self.parse_batch(batch)
-                    #datastore.topic_batch_store( message.key, batch_parsed, self.num_partitions)
+                #batch_parsed = self.parse_batch(batch)
+                #datastore.topic_batch_store( message.key, batch_parsed, self.num_partitions)
         except KeyboardInterrupt:
             # Stop the Kafka consumer on keyboard interrupt
             self.consumer.close()
@@ -81,5 +114,3 @@ class KafkaConsumer:
             #else:
             #    datastore.topic_store( message.key, message.value(), self.num_partitions)
             #self.consumer.commit(asynchronous=True)
-
-        self.consumer.close()
