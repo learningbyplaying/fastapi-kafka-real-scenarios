@@ -14,13 +14,27 @@
 
   - Alowing to add new user activity sources
 
-## Setup:
+## Setup
 
 ### Ingestion Environment:
 
 ```
 sudo docker-compose -f ingestion-environment.yml up -d
 ```
+
+### Setup .credentials:
+
+Use the .credentials.backup as template:
+
+```
+cp $REPO_PATH/scenarios/user-events/app/.credentials.backup $REPO_PATH/scenarios/user-events/app/.credentials
+```
+
+Fill the following .env variables with the AWS credentials that has AmazonS3FullAccess
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=
 
 ### Create source "Ecommerce" topic:
 
@@ -36,7 +50,18 @@ sudo docker-compose -f consumers.yml up
 
 # Fast API Kafka Events
 
-
+```
+curl -X 'POST' \
+  'http://0.0.0.0/events/gateway' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "event_type": "view",
+  "user_id": "xxx11",
+  "url": "https://site.com/home",
+  "created_date": "2023-05-23T18:27:10.471Z"
+}'
+```
 
 
 ## Infraestructure
