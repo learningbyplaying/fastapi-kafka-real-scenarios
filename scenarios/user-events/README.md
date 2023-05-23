@@ -1,3 +1,19 @@
+# User Events
+
+## Business requirements
+
+  The application has to gather all the user activity of different sources, the data set resultant called "Events".
+
+  We have some specified sources:
+
+  - Ecommerce like (visits, clicks, basket items, checkouts)
+  - Marketing email publisher:
+    - user activity like in email marketing (email impact, email open, email click)
+  - Marketing display publisher:
+    - user activity like banner (banner view, banner clicked)
+
+  - Alowing to add new user activity sources
+
 ## Setup Ingestion Environment:
 
 ```
@@ -20,19 +36,6 @@ sudo docker-compose -f consumers.yml up -d
 
 
 
-## Business requirements
-
-  The application has to gather all the user activity of different sources, the data set resultant called "Events".
-
-  We have some specified sources:
-
-  - Ecommerce like (visits, clicks, basket items, checkouts)
-  - Marketing email publisher:
-    - user activity like in email marketing (email impact, email open, email click)
-  - Marketing display publisher:
-    - user activity like banner (banner view, banner clicked)
-
-  - Alowing to add new user activity sources
 
 ## Infraestructure
 

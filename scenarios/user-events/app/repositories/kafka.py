@@ -113,7 +113,7 @@ class KafkaConsumer:
 
             while True:
 
-                batch = Batch( consumer=self.consumer, num_partitions=self.num_partitions  ).gather( ).release()
+                batch = Batch( consumer=self.consumer, num_partitions=self.num_partitions  ).gather().release()
                 if batch != None:
                     datastore.store( batch['partition_path'], batch['batch'])
 
