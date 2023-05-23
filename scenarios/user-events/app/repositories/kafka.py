@@ -32,7 +32,7 @@ class Batch:
 
         self.batch_size_max = 1000
         self.minutes_timeout = 30
-        self.batch_timeout = 60 * self.minutes_timeout   # Timeout in seconds
+        self.batch_timeout = 20 #60 * self.minutes_timeout   # Timeout in seconds
         self.batch_start = time.time()
         self.partition = None
         self.batch = []

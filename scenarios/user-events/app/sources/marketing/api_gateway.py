@@ -13,7 +13,7 @@ load_dotenv()
 
 #Infraestructue
 base_path = os.getenv("base_path")
-source_path = f"{base_path}/ecommerce"
+source_path = f"{base_path}/marketing"
 producer_config = {'bootstrap.servers': os.getenv("bootstrap.servers"),'client.id': 'fastapi-producer', 'schema.registry.url':os.getenv("schema_registry_url")}
 
 #Schema
@@ -23,22 +23,19 @@ topic_data = json.load(open( f"{source_path}/topic.json"))
 #endpoint
 app = FastAPI()
 
-class EcommerceEvent(BaseModel):
+class MarketingEvent(BaseModel):
     event_type: str
-    user_id: str
+    email: str
 
-    url: str = None
-    product_id: str = None
-    text: str = None
-    order_id: str = None
-    search: str = None
+    campaign_id: str = None
+    campaign_name: str = None
 
     created_date: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
 
-@app.post("/ecommerce/events",  tags=['Ecommerce'])
-async def events(event: EcommerceEvent):
+@app.post("/marketing/events",  tags=['Marketing'])
+async def events(event: MarketingEvent):
 
     event_dict = event.dict()
     del event_dict['created_date']
@@ -48,4 +45,4 @@ async def events(event: EcommerceEvent):
     kp = KafkaProducer(topic=topic_data,schema=avro_schema,config=producer_config)
     kp.run(event_dict)
 
-    return {"Kafka": "EcommerceEvent"}
+    return {"Kafka": "MarketingEvent"}
