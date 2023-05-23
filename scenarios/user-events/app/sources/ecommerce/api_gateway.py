@@ -26,8 +26,13 @@ app = FastAPI()
 class EcommerceEvent(BaseModel):
     event_type: str
     user_id: str
-    url: str
+
+    url: str = None
+    product_id: str = None
     text: str = None
+    order_id: str = None
+    search: str = None
+
     created_date: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
