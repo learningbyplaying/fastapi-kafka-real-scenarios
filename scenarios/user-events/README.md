@@ -14,16 +14,18 @@
 
   - Alowing to add new user activity sources
 
-## Setup Ingestion Environment:
+## Setup:
+
+### Ingestion Environment:
 
 ```
 sudo docker-compose -f ingestion-environment.yml up -d
 ```
 
-## Setup channel "Ecommerce":
+### Create source "Ecommerce" topic:
 
 ```
-cd $REPO_PATH/scenarios/user-events/app && ./scripts/setup.sh channels/ecommerce/topic.json
+cd $REPO_PATH/scenarios/user-events/app && ./scripts/setup.sh sources/ecommerce/topic.json
 ```
 
 ## Setup consumers:
