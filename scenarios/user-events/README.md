@@ -16,13 +16,13 @@
 
 ## Setup
 
-### Ingestion Environment:
+### Ingestion infrastructure
 
 ```
 sudo docker-compose -f ingestion-environment.yml up -d
 ```
 
-### Setup .credentials:
+### Setup .credentials
 
 Use the .credentials.backup as template:
 
@@ -32,14 +32,34 @@ cp $REPO_PATH/scenarios/user-events/app/.credentials.backup $REPO_PATH/scenarios
 
 Fill the following .env variables with the AWS credentials that has AmazonS3FullAccess
 
+```
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 AWS_DEFAULT_REGION=
+```
 
-### Create source "Ecommerce" topic:
+### Setup kafka topics
+
+Each source has to has defined the topic definition.
+
+Example source "ecommerce":
+
+$REPO_PATH/scenarios/user-events/app/sources/ecommerce/topic.json
 
 ```
-cd $REPO_PATH/scenarios/user-events/app && ./scripts/setup.sh sources/ecommerce/topic.json
+{
+  "topic": "ecommerce_events",
+  "num_partitions": 1,
+  "replication_factor": 1
+}
+```
+
+Create the topic:
+
+```
+SCENARIO_PATH=$REPO_PATH/scenarios/user-events/app
+
+cd $SCENARIO_PATH && ./scripts/setup.sh sources/ecommerce/topic.json
 ```
 
 ### Setup consumers:
