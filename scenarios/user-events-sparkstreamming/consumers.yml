@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+
+
+  consumer_1:
+    build: ./app
+    volumes:
+     - ./app:/app
+    ports:
+     - "8000:80"
+    environment:
+     - PORT=80
+    command: python -u consumer.py --source ecommerce
+    #command: sleep infinity
+
+
+  consumer_2:
+    build: ./app
+    volumes:
+     - ./app:/app
+    ports:
+     - "8001:80"
+    environment:
+     - PORT=80
+    command: python -u consumer.py --source marketing
+    #command: sleep infinity

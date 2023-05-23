@@ -1,0 +1,17 @@
+{
+  "namespace": "ecommerce.event",
+  "type": "record",
+  "name": "EcommerceEvent",
+  "fields": [
+    {"name": "event_type", "type": "string"},
+    {"name": "user_id","type": "string"},
+
+    {"name": "url", "type": ["string","null"] },
+    {"name": "product_id",  "type": ["string","null"] },
+    {"name": "text",  "type": ["string","null"] },
+    {"name": "order_id",  "type": ["string","null"] },
+    {"name": "search",  "type": ["string","null"] },
+
+    {"name": "epoch","type": "long"}
+  ]
+}
