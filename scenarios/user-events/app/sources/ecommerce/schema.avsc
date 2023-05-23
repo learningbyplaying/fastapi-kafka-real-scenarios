@@ -4,7 +4,6 @@
   "name": "EcommerceEvent",
   "fields": [
     {"name": "event_type", "type": "string"},
-    {"name": "time", "type": "string"},
     {"name": "user_id","type": "string"},
 
     {"name": "url", "type": ["string","null"] },

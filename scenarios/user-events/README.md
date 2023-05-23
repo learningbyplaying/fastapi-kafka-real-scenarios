@@ -28,10 +28,10 @@ sudo docker-compose -f ingestion-environment.yml up -d
 cd $REPO_PATH/scenarios/user-events/app && ./scripts/setup.sh sources/ecommerce/topic.json
 ```
 
-## Setup consumers:
+### Setup consumers:
 
 ```
-sudo docker-compose -f consumers.yml up -d
+sudo docker-compose -f consumers.yml up
 ```
 
 # Fast API Kafka Events
