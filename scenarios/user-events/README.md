@@ -68,7 +68,7 @@ sudo docker-compose -f consumers.yml up
 
 ## Run
 
-You can send user events
+You can send user events of "ecommerce" source:
 
 ```
 curl -X 'POST' \
@@ -82,3 +82,5 @@ curl -X 'POST' \
   "created_date": "2023-05-23T18:27:10.471Z"
 }'
 ```
+
+The events go over kafka topic and then the consumers would store the events on S3 in batches.
