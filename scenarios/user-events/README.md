@@ -40,9 +40,7 @@ AWS_DEFAULT_REGION=
 
 ### Setup kafka topics
 
-Each source has to has defined the topic definition.
-
-Example source "ecommerce":
+Each source has to has defined the topic definition. Sample source "ecommerce":
 
 $REPO_PATH/scenarios/user-events/app/sources/ecommerce/topic.json
 
