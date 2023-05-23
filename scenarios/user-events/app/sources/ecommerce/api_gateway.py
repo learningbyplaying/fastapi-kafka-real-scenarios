@@ -32,7 +32,7 @@ class EcommerceEvent(BaseModel):
         default_factory=lambda: datetime.now(timezone.utc)
     )
 
-@app.post("/events/gateway",  tags=['Ecommerce'])
+@app.post("/ecommerce/events",  tags=['Ecommerce'])
 async def events(event: EcommerceEvent):
 
     event_dict = event.dict()
