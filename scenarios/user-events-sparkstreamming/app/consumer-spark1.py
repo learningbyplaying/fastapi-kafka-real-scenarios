@@ -1,4 +1,5 @@
 from pyspark.sql import SparkSession
+
 import pyspark.sql.functions as F
 from pyspark.sql.types import StructType, StructField, StringType, LongType, TimestampType
 
@@ -6,20 +7,14 @@ KAFKA_BOOTSTRAP_SERVERS = "kafka:9092"
 KAFKA_TOPIC = "ecommerce_events"
 
 SCHEMA = StructType([
-    StructField("ID EQP", LongType()),
-    StructField("DATA HORA", TimestampType()),
-    StructField("MILESEGUNDO", LongType()),
-    StructField("CLASSIFICAÇÃO", StringType()),
-    StructField("FAIXA", LongType()),
-    StructField("ID DE ENDEREÇO", LongType()),
-    StructField("VELOCIDADE DA VIA", StringType()),
-    StructField("VELOCIDADE AFERIDA", StringType()),
-    StructField("TAMANHO", StringType()),
-    StructField("NUMERO DE SÉRIE", LongType()),
-    StructField("LATITUDE", StringType()),
-    StructField("LONGITUDE", StringType()),
-    StructField("ENDEREÇO", StringType()),
-    StructField("SENTIDO", StringType())
+    StructField("event_type", StringType()),
+    StructField("user_id", StringType()),
+    StructField("url", StringType()),
+    StructField("product_id", StringType()),
+    StructField("text", StringType()),
+    StructField("order_id", StringType()),
+    StructField("search", StringType()),
+    StructField("epoch", LongType())
 ])
 
 spark = SparkSession.builder.appName("read_traffic_sensor_topic").getOrCreate()
