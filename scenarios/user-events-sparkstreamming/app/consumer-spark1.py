@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.avro.functions import from_avro
+#from pyspark.sql.avro.functions import from_avro
 
 import pyspark.sql.functions as F
 from pyspark.sql.types import StructType, StructField, StringType, LongType, TimestampType
@@ -33,20 +33,19 @@ df_connect = spark\
     .option("startingOffsets", "earliest")\
     .load()
 
-output = df_connect\
-  .select(from_avro("value", jsonFormatSchema).alias("event"))\
+#output = df_connect\
+#  .select(from_avro("value", jsonFormatSchema).alias("event"))
 
-"""
-df_traffic_stream.select(
+
+step1 = df_connect.select(
     # Convert the value to a string
     F.from_json(
         F.decode(F.col("value"), "iso-8859-1"),
         SCHEMA
     ).alias("value")
-)\
-.select("value.*")\
-"""
-result = output\
+).select("value.*")
+
+result = df_connect\
     .writeStream\
     .outputMode("append")\
     .format("console")\
