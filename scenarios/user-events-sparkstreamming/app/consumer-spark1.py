@@ -1,4 +1,5 @@
 from pyspark.sql import SparkSession
+from pyspark.sql.avro.functions import from_avro
 
 import pyspark.sql.functions as F
 from pyspark.sql.types import StructType, StructField, StringType, LongType, TimestampType
@@ -19,16 +20,23 @@ SCHEMA = StructType([
 
 spark = SparkSession.builder.appName("read_traffic_sensor_topic").getOrCreate()
 
+jsonFormatSchema = open("/app/sources/ecommerce/schema.avsc", "r").read()
+
+
 # Reduce logging verbosity
 spark.sparkContext.setLogLevel("WARN")
 
-df_traffic_stream = spark\
+df_connect = spark\
     .readStream.format("kafka")\
     .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS)\
     .option("subscribe", KAFKA_TOPIC)\
     .option("startingOffsets", "earliest")\
     .load()
 
+output = df_connect\
+  .select(from_avro("value", jsonFormatSchema).alias("event"))\
+
+"""
 df_traffic_stream.select(
     # Convert the value to a string
     F.from_json(
@@ -37,8 +45,10 @@ df_traffic_stream.select(
     ).alias("value")
 )\
 .select("value.*")\
-.writeStream\
-.outputMode("append")\
-.format("console")\
-.start()\
-.awaitTermination()
+"""
+result = output\
+    .writeStream\
+    .outputMode("append")\
+    .format("console")\
+    .start()\
+    .awaitTermination()

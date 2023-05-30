@@ -83,6 +83,13 @@ curl -X 'POST' \
 }'
 ```
 
+
+```
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0 consumer-spark1.py
+
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0,org.apache.spark:spark-avro:3.3.2 consumer-spark1.py
+```
+
 The events go over kafka topic and then the consumers would store the events on S3 in batches.
 https://towardsdatascience.com/a-fast-look-at-spark-structured-streaming-kafka-f0ff64107325
 

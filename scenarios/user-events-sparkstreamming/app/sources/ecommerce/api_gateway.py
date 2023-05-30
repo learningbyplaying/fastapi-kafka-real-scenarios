@@ -4,6 +4,8 @@ from datetime import datetime, timezone, timedelta
 
 from repositories.kafka import KafkaProducer
 
+#from confluent_kafka import Producer
+
 import os, json
 from confluent_kafka import avro
 ## Settings
@@ -45,6 +47,12 @@ async def events(event: EcommerceEvent):
     #print(event_dict)
 
     kp = KafkaProducer(topic=topic_data,schema=avro_schema,config=producer_config)
+    #kp = KafkaProducer(topic=topic_data,config=producer_config)
     kp.run(event_dict)
+
+    #producer = Producer(producer_config)
+    #producer.produce(topic_data['topic'], value=event_dict)
+    #producer.flush()
+
 
     return {"Kafka": "EcommerceEvent"}
