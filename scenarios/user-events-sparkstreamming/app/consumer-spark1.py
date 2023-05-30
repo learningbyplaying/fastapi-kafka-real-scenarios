@@ -3,7 +3,7 @@ import pyspark.sql.functions as F
 from pyspark.sql.types import StructType, StructField, StringType, LongType, TimestampType
 
 KAFKA_BOOTSTRAP_SERVERS = "kafka:9092"
-KAFKA_TOPIC = "traffic_sensor"
+KAFKA_TOPIC = "ecommerce_events"
 
 SCHEMA = StructType([
     StructField("ID EQP", LongType()),
@@ -21,7 +21,6 @@ SCHEMA = StructType([
     StructField("ENDEREÇO", StringType()),
     StructField("SENTIDO", StringType())
 ])
-
 
 spark = SparkSession.builder.appName("read_traffic_sensor_topic").getOrCreate()
 
