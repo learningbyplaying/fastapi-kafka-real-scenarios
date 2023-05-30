@@ -26,7 +26,7 @@ RUN echo "export PATH=$PATH:/root/spark-3.4.0-bin-hadoop3/bin:/root/spark-3.4.0-
 
 #PYTHON
 RUN apt-get update && apt-get install python-pip -y
-RUN echo "export PYSPARK_PYTHON=/usr/bin/python3" >> /etc/bash.bashrc
+RUN echo "export PYSPARK_PYTHON=/usr/bin/python" >> /etc/bash.bashrc
 
 WORKDIR /app
 
