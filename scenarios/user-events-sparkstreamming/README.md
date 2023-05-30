@@ -84,3 +84,4 @@ curl -X 'POST' \
 ```
 
 The events go over kafka topic and then the consumers would store the events on S3 in batches.
+https://www.youtube.com/watch?v=xzxldb1qunY
