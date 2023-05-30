@@ -32,7 +32,8 @@ services:
       - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
 
   producer:
-    build: ./app
+    #build: ./app
+    build: ./dockers/producer
     volumes:
      - ./app:/app
     ports:
