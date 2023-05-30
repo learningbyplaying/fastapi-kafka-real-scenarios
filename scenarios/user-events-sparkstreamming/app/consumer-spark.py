@@ -22,7 +22,7 @@ stream = KafkaUtils.createDirectStream(ssc, topics, kafka_params)
 
 # Process each message in the stream
 #stream.foreachRDD(lambda rdd: rdd.foreach(lambda message: print(message)))
-stream.foreachRDD(lambda rdd: rdd.foreach(lambda message: sys.stdout.write(message + "\n")))
+stream.foreachRDD(lambda rdd: rdd.show())
 
 # Start the streaming context
 ssc.start()

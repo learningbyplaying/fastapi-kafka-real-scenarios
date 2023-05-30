@@ -84,5 +84,9 @@ curl -X 'POST' \
 ```
 
 The events go over kafka topic and then the consumers would store the events on S3 in batches.
+https://towardsdatascience.com/a-fast-look-at-spark-structured-streaming-kafka-f0ff64107325
+
 https://www.youtube.com/watch?v=xzxldb1qunY
 https://stackoverflow.com/questions/63053460/no-module-named-pyspark-streaming-kafka-even-with-older-spark-version
+
+https://www.rittmanmead.com/blog/2017/01/getting-started-with-spark-streaming-with-python-and-kafka/
