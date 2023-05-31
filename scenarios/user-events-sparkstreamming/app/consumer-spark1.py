@@ -60,7 +60,7 @@ windowed_df = df_connect \
 query = windowed_df \
     .writeStream \
     .outputMode("update") \
-    .trigger(processingTime="10 minutes")\
+    .trigger(processingTime="2 minutes")\
     .format("console")\
     .start()
 
