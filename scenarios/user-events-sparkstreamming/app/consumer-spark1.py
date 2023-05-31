@@ -46,18 +46,21 @@ step1 = df_connect.select(
     ).alias("value")
 ).select("value.*")
 
+windowed_df = df_connect
 # Apply a window to the streaming DataFrame
-windowed_df = df_connect \
-    .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)", "timestamp") \
-    .withWatermark("timestamp", "10 minutes") \
-    .groupBy(window("timestamp", "5 minutes"), "key") \
-    .count()
+#windowed_df = df_connect \
+#    .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)", "timestamp") \
+#    .withWatermark("timestamp", "10 minutes")
+#\
+#    .groupBy(window("timestamp", "5 minutes"), "key") \
+#    .count()
 
 # Perform transformations and actions on the windowed DataFrame
 query = windowed_df \
     .writeStream \
-    .outputMode("complete") \
+    .outputMode("append") \
     .format("console") \
+    .option("truncate", "false") \
     .start()
 
 # Start the streaming query
