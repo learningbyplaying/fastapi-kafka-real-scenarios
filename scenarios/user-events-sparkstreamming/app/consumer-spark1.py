@@ -46,9 +46,10 @@ step1 = df_connect.select(
     ).alias("value")
 ).select("value.*")
 
-windowed_df = df_connect
+#windowed_df = df_connect
 # Apply a window to the streaming DataFrame
-#windowed_df = df_connect \
+windowed_df = df_connect \
+    .withColumn("window",window("timestamp","10 minutes")) #,"1 minutes"))
 #    .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)", "timestamp") \
 #    .withWatermark("timestamp", "10 minutes")
 #\
@@ -60,8 +61,9 @@ query = windowed_df \
     .writeStream \
     .outputMode("append") \
     .format("console") \
-    .option("truncate", "false") \
     .start()
+
+#    .option("truncate", "false") \
 
 # Start the streaming query
 query.awaitTermination()
