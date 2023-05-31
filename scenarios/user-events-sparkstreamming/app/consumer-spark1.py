@@ -59,8 +59,9 @@ windowed_df = df_connect \
 # Perform transformations and actions on the windowed DataFrame
 query = windowed_df \
     .writeStream \
-    .outputMode("append") \
-    .format("console") \
+    .outputMode("update") \
+    .trigger(processingTime="10 minutes")\
+    .format("console")\
     .start()
 
 #    .option("truncate", "false") \
