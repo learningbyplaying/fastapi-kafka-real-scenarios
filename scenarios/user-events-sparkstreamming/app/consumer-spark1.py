@@ -31,7 +31,7 @@ df_connect = spark\
     .readStream.format("kafka")\
     .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS)\
     .option("subscribe", KAFKA_TOPIC)\
-    .option("startingOffsets", "earliest")\
+    .option("startingOffsets", "latest")\
     .load()
 
 #output = df_connect\
