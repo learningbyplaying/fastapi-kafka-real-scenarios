@@ -47,7 +47,7 @@ query = windowed_df \
     .outputMode("update") \
     .format("console")\
     .foreachBatch(write_to_s3) \
-    .trigger(processingTime="2 minutes")\
+    .trigger(processingTime="10 minutes")\
     .start()
 
 # Start the streaming query
