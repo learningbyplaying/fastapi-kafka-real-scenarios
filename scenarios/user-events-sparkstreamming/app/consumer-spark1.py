@@ -56,6 +56,7 @@ windowed_df = df_connect \
 #    .groupBy(window("timestamp", "5 minutes"), "key") \
 #    .count()
 
+
 # Perform transformations and actions on the windowed DataFrame
 query = windowed_df \
     .writeStream \
