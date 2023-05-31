@@ -1,4 +1,5 @@
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import window
 #from pyspark.sql.avro.functions import from_avro
 
 import pyspark.sql.functions as F
@@ -45,9 +46,28 @@ step1 = df_connect.select(
     ).alias("value")
 ).select("value.*")
 
+# Apply a window to the streaming DataFrame
+windowed_df = df_connect \
+    .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)", "timestamp") \
+    .withWatermark("timestamp", "10 minutes") \
+    .groupBy(window("timestamp", "5 minutes"), "key") \
+    .count()
+
+# Perform transformations and actions on the windowed DataFrame
+query = windowed_df \
+    .writeStream \
+    .outputMode("complete") \
+    .format("console") \
+    .start()
+
+# Start the streaming query
+query.awaitTermination()
+
+"""
 result = df_connect\
     .writeStream\
     .outputMode("append")\
     .format("console")\
     .start()\
     .awaitTermination()
+"""
