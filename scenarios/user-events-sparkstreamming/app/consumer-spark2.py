@@ -1,48 +1,57 @@
 from pyspark.sql import SparkSession
-import pyspark.sql.functions as psf
-from pyspark.sql.types import *
-import io
-import fastavro
+from pyspark.sql.functions import window
 
-def deserialize_avro(serialized_msg):
-    bytes_io = io.BytesIO(serialized_msg)
-    bytes_io.seek(0)
-    avro_schema = {
-                    "type": "record",
-                    "name": "struct",
-                    "fields": [
-                      {"name": "col1", "type": "long"},
-                      {"name": "col2", "type": "string"}
-                    ]
-                  }
+import pyspark.sql.functions as F
+from pyspark.sql.types import StructType, StructField, StringType, LongType, TimestampType
 
-    deserialized_msg = fastavro.schemaless_reader(bytes_io, avro_schema)
+KAFKA_BOOTSTRAP_SERVERS = "kafka:9092"
+KAFKA_TOPIC = "ecommerce_events"
 
-    return (    deserialized_msg["col1"],
-                deserialized_msg["col2"]
-            )
+SCHEMA = StructType([
+    StructField("event_type", StringType()),
+    StructField("user_id", StringType()),
+    StructField("url", StringType()),
+    StructField("product_id", StringType()),
+    StructField("text", StringType()),
+    StructField("order_id", StringType()),
+    StructField("search", StringType()),
+    StructField("epoch", LongType())
+])
 
-if __name__=="__main__":
-  spark = SparkSession \
-        .builder \
-        .appName("consume kafka message") \
-        .getOrCreate()
+spark = SparkSession.builder.appName("read_traffic_sensor_topic").getOrCreate()
+jsonFormatSchema = open("/app/sources/ecommerce/schema.avsc", "r").read()
 
-  kafka_df = spark \
-              .readStream \
-              .format("kafka") \
-              .option("kafka.bootstrap.servers", "kafka:9092") \
-              .option("subscribe", "ecommerce_events") \
-              .option("stopGracefullyOnShutdown", "true") \
-              .load()
+# Reduce logging verbosity
+spark.sparkContext.setLogLevel("WARN")
 
-  df_schema = StructType([
-              StructField("col1", LongType(), True),
-              StructField("col2", StringType(), True)
-          ])
+# Define a function to handle the writing process
+def write_to_s3(df, epoch_id):
+    batch_time = epoch_id
+    s3_path = f"s3a://your_bucket/path/{batch_time}/"
 
-  avro_deserialize_udf = psf.udf(deserialize_avro, returnType=df_schema)
-  parsed_df = kafka_df.withColumn("avro", avro_deserialize_udf(psf.col("value"))).select("avro.*")
+    # Write the DataFrame to S3
+    df.write \
+        .format("parquet") \
+        .mode("append") \
+        .save(s3_path)
 
-  query = parsed_df.writeStream.format("console").option("truncate", "true").start()
-  query.awaitTermination()
+
+df_connect = spark\
+    .readStream.format("kafka")\
+    .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS)\
+    .option("subscribe", KAFKA_TOPIC)\
+    .option("startingOffsets", "latest")\
+    .load()
+
+windowed_df = df_connect \
+    .withColumn("window",window("timestamp","10 minutes")) #,"1 minutes"))
+
+query = windowed_df \
+    .writeStream \
+    .outputMode("update") \
+    .format("console")\
+    .foreachBatch(write_to_s3) \
+    .start()
+
+# Start the streaming query
+query.awaitTermination()

@@ -91,6 +91,9 @@ spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0,org.apa
 ```
 
 The events go over kafka topic and then the consumers would store the events on S3 in batches.
+
+https://programmaticponderings.com/2021/09/09/getting-started-with-spark-structured-streaming-and-kafka-on-aws-using-amazon-msk-and-amazon-emr%EF%BF%BC/
+
 https://towardsdatascience.com/a-fast-look-at-spark-structured-streaming-kafka-f0ff64107325
 
 https://www.youtube.com/watch?v=xzxldb1qunY

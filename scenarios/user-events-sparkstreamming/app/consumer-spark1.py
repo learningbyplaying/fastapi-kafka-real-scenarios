@@ -61,9 +61,15 @@ windowed_df = df_connect \
 query = windowed_df \
     .writeStream \
     .outputMode("update") \
-    .trigger(processingTime="2 minutes")\
+    #.trigger(processingTime="2 minutes")\
     .format("console")\
     .start()
+
+query2 = windowed_df \
+    .write \
+    ..csv(path=f"s3a://{params['kafka_demo_bucket']}/spark_output/sales_by_country",
+         header=True, sep="|") \
+    .mode("overwrite")
 
 #    .option("truncate", "false") \
 
