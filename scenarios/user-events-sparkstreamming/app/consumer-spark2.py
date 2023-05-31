@@ -3,6 +3,8 @@ import os
 load_dotenv()
 load_dotenv('/app/.credentials')
 
+from datetime import datetime
+
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import window
 import pyspark.sql.functions as F
@@ -23,8 +25,15 @@ df_connect = spark\
 
 # Define a function to handle the writing process
 def write_to_s3(df, epoch_id):
+
+    current_time = datetime.now()
+    year = current_time.strftime("%Y")
+    month = current_time.strftime("%m")
+    day = current_time.strftime("%d")
+    hour = current_time.strftime("%H")
+
     batch_time = epoch_id
-    s3_path = f"s3a://etl-on-yaml/repositories/kafka/{batch_time}/"
+    s3_path = f"s3a://etl-on-yaml/repositories/kafka/topic={KAFKA_TOPIC}/year={year}/month={month}/day={day}/hour={hour}/{batch_time}"
     df.write \
         .format("parquet") \
         .mode("append") \
